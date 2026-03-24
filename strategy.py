@@ -187,8 +187,8 @@ def analyze_markets(
         if not ticker:
             continue
 
-        # Status check
-        if market.get("status") != "open":
+        # Status: Kalshi returns "active" for open markets
+        if market.get("status") not in ("open", "active"):
             continue
 
         # Expiry window check
@@ -199,24 +199,32 @@ def analyze_markets(
         if expiry_ts < min_expiry or expiry_ts > max_expiry:
             continue
 
-        # Orderbook check
-        ob = orderbooks.get(ticker)
-        if not ob:
-            continue
-        prices = _extract_orderbook_prices(ob)
-        if prices is None:
-            continue
-        bid_cents, ask_cents = prices
-
-        # Volume: API doesn't reliably return volume in market list.
-        # Use total orderbook dollar quantity as a liquidity proxy instead.
-        ob_fp = ob.get("orderbook_fp", {})
+        # Prices: use market-level fields (faster than fetching orderbooks)
         try:
-            yes_qty = sum(float(x[1]) for x in ob_fp.get("yes_dollars", []) if len(x) >= 2)
-            no_qty = sum(float(x[1]) for x in ob_fp.get("no_dollars", []) if len(x) >= 2)
-            volume = int(yes_qty + no_qty)
+            bid_cents = round(float(market.get("yes_bid_dollars") or 0) * 100)
+            ask_cents = round(float(market.get("yes_ask_dollars") or 1) * 100)
         except (ValueError, TypeError):
-            volume = market.get("volume", 0) or 0
+            continue
+
+        if bid_cents <= 0 or ask_cents <= 0 or bid_cents >= ask_cents:
+            continue
+
+        # Volume: use volume_fp from market object; fall back to open_interest_fp
+        try:
+            volume = int(float(market.get("volume_fp") or market.get("open_interest_fp") or 0))
+        except (ValueError, TypeError):
+            volume = 0
+
+        # Augment volume with orderbook size if available
+        ob = orderbooks.get(ticker)
+        if ob:
+            ob_fp = ob.get("orderbook_fp", {})
+            try:
+                yes_qty = sum(float(x[1]) for x in ob_fp.get("yes_dollars", []) if len(x) >= 2)
+                no_qty = sum(float(x[1]) for x in ob_fp.get("no_dollars", []) if len(x) >= 2)
+                volume = max(volume, int(yes_qty + no_qty))
+            except (ValueError, TypeError):
+                pass
 
         implied_prob = (bid_cents + ask_cents) / 200.0
         spread_cents = ask_cents - bid_cents

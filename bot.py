@@ -371,12 +371,8 @@ def _run(cfg, logger, dry_run: bool):
 
     logger.info(f"Found {len(markets)} tradeable short-term markets")
 
-    # --- Fetch orderbooks ---
-    tickers = [m["ticker"] for m in markets if m.get("ticker")]
-    orderbooks = _fetch_all_orderbooks(client, tickers, logger)
-
-    # --- Strategy ---
-    candidates = strat.analyze_markets(markets, orderbooks, cfg)
+    # --- Strategy (prices come from market object; orderbooks optional for depth) ---
+    candidates = strat.analyze_markets(markets, {}, cfg)
     logger.info(f"Qualified candidates: {len(candidates)}")
 
     selected = strat.select_trades(candidates, today_budget, cfg)
