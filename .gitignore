@@ -1,0 +1,18 @@
+# Credentials — never commit these
+*.pem
+private_key*
+config.json
+
+# Logs (except the .gitkeep placeholder)
+logs/*.csv
+logs/*.log
+logs/*.lock
+logs/positions_state.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
