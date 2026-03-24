@@ -208,8 +208,15 @@ def analyze_markets(
             continue
         bid_cents, ask_cents = prices
 
-        # Volume — Kalshi returns volume as int on the market object
-        volume = market.get("volume", 0) or 0
+        # Volume: API doesn't reliably return volume in market list.
+        # Use total orderbook dollar quantity as a liquidity proxy instead.
+        ob_fp = ob.get("orderbook_fp", {})
+        try:
+            yes_qty = sum(float(x[1]) for x in ob_fp.get("yes_dollars", []) if len(x) >= 2)
+            no_qty = sum(float(x[1]) for x in ob_fp.get("no_dollars", []) if len(x) >= 2)
+            volume = int(yes_qty + no_qty)
+        except (ValueError, TypeError):
+            volume = market.get("volume", 0) or 0
 
         implied_prob = (bid_cents + ask_cents) / 200.0
         spread_cents = ask_cents - bid_cents
