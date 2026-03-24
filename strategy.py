@@ -33,27 +33,45 @@ class TradeCandidate:
 
 def _extract_orderbook_prices(orderbook: dict) -> Optional[tuple]:
     """
-    Extract best bid and ask from Kalshi orderbook response.
-    Returns (yes_bid_cents, yes_ask_cents) or None if orderbook is empty.
+    Extract best bid and ask from Kalshi orderbook_fp response.
+    Prices are decimal strings (0.0 - 1.0); we convert to cents (0-100).
+    Returns (yes_bid_cents, yes_ask_cents) or None if orderbook is unusable.
     """
-    yes_bids = orderbook.get("orderbook", {}).get("yes", [])
-    yes_asks = orderbook.get("orderbook", {}).get("no", [])  # Kalshi: NO bids = YES asks
+    ob = orderbook.get("orderbook_fp", {})
+    yes_dollars = ob.get("yes_dollars", [])  # YES bids: [[price_str, qty_str], ...]
+    no_dollars = ob.get("no_dollars", [])    # NO bids: [[price_str, qty_str], ...]
 
-    if not yes_bids or not yes_asks:
+    # Best YES bid (highest price someone pays for YES)
+    best_yes_bid: Optional[int] = None
+    if yes_dollars:
+        try:
+            best_yes_bid = round(float(yes_dollars[0][0]) * 100)
+        except (ValueError, IndexError):
+            pass
+
+    # Best NO bid → implies YES ask price (YES ask = 1 - best NO bid)
+    best_yes_ask: Optional[int] = None
+    if no_dollars:
+        try:
+            best_no_bid = float(no_dollars[0][0])
+            best_yes_ask = round((1.0 - best_no_bid) * 100)
+        except (ValueError, IndexError):
+            pass
+
+    # Need at least one side to compute mid-price
+    if best_yes_bid is None and best_yes_ask is None:
         return None
 
-    # yes_bids are sorted descending by price; first entry is best bid
-    best_bid = yes_bids[0][0] if yes_bids else None
-    # no_bids give the ask side for yes; best NO bid = 100 - best YES ask
-    best_no_bid = yes_asks[0][0] if yes_asks else None
-    best_ask = 100 - best_no_bid if best_no_bid is not None else None
+    # Fill in missing side for one-sided markets
+    if best_yes_bid is None:
+        best_yes_bid = max(best_yes_ask - 1, 0)
+    if best_yes_ask is None:
+        best_yes_ask = min(best_yes_bid + 1, 99)
 
-    if best_bid is None or best_ask is None:
-        return None
-    if best_bid >= best_ask:
+    if best_yes_bid >= best_yes_ask:
         return None
 
-    return int(best_bid), int(best_ask)
+    return int(best_yes_bid), int(best_yes_ask)
 
 
 def _classify_tier(
