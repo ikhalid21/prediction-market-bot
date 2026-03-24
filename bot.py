@@ -161,7 +161,9 @@ def _fetch_all_markets(client: KalshiClient, cfg, logger: logging.Logger) -> lis
             if not cursor or not markets:
                 break
 
-        logger.info(f"Series {series}: fetched {len([m for m in all_markets if m.get('event_ticker', '').startswith(series)])} markets")
+        series_count = len([m for m in all_markets if m.get('event_ticker', '').startswith(series)])
+        if series_count > 0:
+            logger.info(f"Series {series}: {series_count} markets")
 
     logger.info(f"Total markets fetched: {len(all_markets)}")
     return all_markets
