@@ -100,6 +100,7 @@ class Config:
     dca: DcaConfig
     logging: LoggingConfig
     github: GitHubConfig = None
+    imessage_number: str = ""
 
 
 def load_config(path: str = "config.json") -> Config:
@@ -130,6 +131,7 @@ def load_config(path: str = "config.json") -> Config:
             dca=DcaConfig(**d["dca"]),
             logging=LoggingConfig(**d["logging"]),
             github=GitHubConfig(**d["github"]) if d.get("github") else None,
+            imessage_number=d.get("imessage_number", ""),
         )
     except KeyError as e:
         sys.exit(f"[config] ERROR: Missing required config field: {e}")

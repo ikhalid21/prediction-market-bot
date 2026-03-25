@@ -1,14 +1,28 @@
 """
-Push notification system via ntfy.sh.
+Push notification system via ntfy.sh and iMessage.
 Never raises — notification failures must never crash the bot.
 """
 
 import logging
+import subprocess
 from typing import List, Optional
 
 import requests
 
 logger = logging.getLogger(__name__)
+
+
+def send_imessage(number: str, message: str) -> bool:
+    """Send an iMessage via the Mac Messages app using osascript. Never raises."""
+    if not number:
+        return False
+    try:
+        script = f'tell application "Messages" to send "{message}" to buddy "{number}" of (first service whose service type is iMessage)'
+        subprocess.run(["osascript", "-e", script], timeout=10, check=True, capture_output=True)
+        return True
+    except Exception as e:
+        logger.warning(f"iMessage failed: {e}")
+        return False
 
 
 def send(
@@ -67,6 +81,7 @@ def send_daily_summary(cfg, trades: list, budget_used: float, failed_count: int)
     message = "\n".join(lines)
     title = f"Kalshi Bot — {len(trades)} trades, ${budget_used:.2f} deployed"
     send(cfg.ntfy_topic, title, message, priority="default", tags=["chart_with_upwards_trend"], server=cfg.ntfy_server)
+    send_imessage(getattr(cfg, "imessage_number", ""), f"{title}\n{message}")
 
 
 def send_settlement(cfg, ticker: str, result: str, pnl_cents: int) -> None:
@@ -86,6 +101,7 @@ def send_settlement(cfg, ticker: str, result: str, pnl_cents: int) -> None:
 
     message = f"Settled: {ticker}\nResult: {result.upper()}\nP&L: ${pnl_usd:+.2f}"
     send(cfg.ntfy_topic, title, message, priority=priority, tags=tags, server=cfg.ntfy_server)
+    send_imessage(getattr(cfg, "imessage_number", ""), f"{title}\n{message}")
 
 
 def send_error(cfg, context: str, error: str) -> None:
@@ -96,6 +112,7 @@ def send_error(cfg, context: str, error: str) -> None:
     title = f"Kalshi Bot ERROR: {context}"
     message = f"Context: {context}\n\nError:\n{error}"
     send(cfg.ntfy_topic, title, message, priority="urgent", tags=["warning"], server=cfg.ntfy_server)
+    send_imessage(getattr(cfg, "imessage_number", ""), f"{title}\n{message}")
 
 
 def send_no_trade(cfg, reason: str) -> None:
@@ -107,3 +124,4 @@ def send_no_trade(cfg, reason: str) -> None:
     today = date.today().strftime("%Y-%m-%d")
     title = f"Kalshi Bot — No trades ({today})"
     send(cfg.ntfy_topic, title, reason, priority="low", tags=["zzz"], server=cfg.ntfy_server)
+    send_imessage(getattr(cfg, "imessage_number", ""), f"{title}\n{reason}")
