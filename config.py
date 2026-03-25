@@ -80,6 +80,13 @@ class LoggingConfig:
 
 
 @dataclass
+class GitHubConfig:
+    token: str
+    repo: str
+    branch: str = "logs"
+
+
+@dataclass
 class Config:
     api_key_id: str
     private_key_path: str
@@ -91,6 +98,7 @@ class Config:
     portfolio: PortfolioConfig
     dca: DcaConfig
     logging: LoggingConfig
+    github: GitHubConfig = None
 
 
 def load_config(path: str = "config.json") -> Config:
@@ -120,6 +128,7 @@ def load_config(path: str = "config.json") -> Config:
             portfolio=PortfolioConfig(**d["portfolio"]),
             dca=DcaConfig(**d["dca"]),
             logging=LoggingConfig(**d["logging"]),
+            github=GitHubConfig(**d["github"]) if d.get("github") else None,
         )
     except KeyError as e:
         sys.exit(f"[config] ERROR: Missing required config field: {e}")

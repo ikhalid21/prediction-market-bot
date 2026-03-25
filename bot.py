@@ -23,6 +23,7 @@ import requests
 
 from config import load_config
 from kalshi_client_demo import KalshiClient
+import github_sync
 import notifier
 import strategy as strat
 
@@ -444,6 +445,9 @@ def _run(cfg, logger, dry_run: bool):
     }
     with open(cfg.logging.run_log_file, "a") as f:
         f.write(json.dumps(run_record) + "\n")
+
+    # Sync logs to GitHub
+    github_sync.sync_logs(cfg)
 
 
 if __name__ == "__main__":
