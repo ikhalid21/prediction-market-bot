@@ -1,0 +1,16 @@
+2026-03-24 15:06:24,965 [INFO] Fetching portfolio data...
+2026-03-24 15:06:24,965 [INFO] Failed to create TzCache, reason: Error creating TzCache folder: '/Users/ikhalid/Library/Caches/py-yfinance' reason: [Errno 17] File exists: '/Users/ikhalid/Library/Caches/py-yfinance'. TzCache will not be used. Tip: You can direct cache to use a different location with 'set_tz_cache_location(mylocation)'
+2026-03-24 15:06:25,454 [ERROR] 
+1 Failed download:
+2026-03-24 15:06:25,454 [ERROR] ['KTOS']: OperationalError('database is locked')
+2026-03-24 15:06:25,599 [INFO] Notification sent: Portfolio: $-28.34 today
+2026-03-24 15:06:25,601 [INFO] Scanning watchlist...
+2026-03-24 15:06:32,506 [INFO] Notification sent: Market Alert: 2 opportunities spotted
+2026-03-24 15:06:32,508 [INFO] Found 2 opportunities
+2026-03-24 15:06:32,510 [INFO] Daily update sent. Portfolio: $8770.43
+2026-03-24 17:00:02,548 [INFO] Fetching portfolio data...
+2026-03-24 17:00:03,946 [INFO] Notification sent: Portfolio: $-119.60 today
+2026-03-24 17:00:03,947 [INFO] Scanning watchlist...
+2026-03-24 17:00:11,492 [INFO] Notification sent: Market Alert: 2 opportunities spotted
+2026-03-24 17:00:11,494 [INFO] Found 2 opportunities
+2026-03-24 17:00:11,496 [INFO] Daily update sent. Portfolio: $9608.13
