@@ -59,29 +59,37 @@ def _setup_logging(cfg) -> logging.Logger:
 LOCK_FILE = "logs/bot.lock"
 
 
-def _acquire_lock(logger: logging.Logger) -> bool:
-    """Return False if the bot already ran today."""
+def _acquire_lock(logger: logging.Logger, runs_per_day: int = 1):
+    """
+    Return (acquired, run_num).
+    Allows up to runs_per_day runs per calendar day.
+    run_num is 1 for the first run of the day, 2 for the second, etc.
+    """
     today = str(date.today())
+    run_num = 1
+
     if os.path.exists(LOCK_FILE):
         try:
             with open(LOCK_FILE) as f:
-                locked_date = f.read().strip()
-            if locked_date == today:
-                logger.info(f"Lock file found for {today} — bot already ran today. Exiting.")
-                return False
-        except OSError:
+                content = f.read().strip()
+            parts = content.split(":")
+            if parts[0] == today:
+                count = int(parts[1]) if len(parts) > 1 else 1
+                if count >= runs_per_day:
+                    logger.info(f"Already ran {count}/{runs_per_day} times today. Exiting.")
+                    return False, 0
+                run_num = count + 1
+        except (OSError, ValueError):
             pass
+
     os.makedirs("logs/", exist_ok=True)
     with open(LOCK_FILE, "w") as f:
-        f.write(today)
-    return True
+        f.write(f"{today}:{run_num}")
+    return True, run_num
 
 
 def _release_lock():
-    try:
-        os.remove(LOCK_FILE)
-    except OSError:
-        pass
+    pass  # lock persists so run count is preserved across runs within the same day
 
 
 # ---------------------------------------------------------------------------
@@ -199,7 +207,7 @@ def _fetch_all_orderbooks(
 ) -> dict:
     """Fetch orderbooks in parallel. Returns dict of ticker -> orderbook data."""
     orderbooks = {}
-    with ThreadPoolExecutor(max_workers=5) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         futures = {executor.submit(_fetch_orderbook, client, t, logger): t for t in tickers}
         for future in as_completed(futures):
             ticker, data = future.result()
@@ -318,30 +326,27 @@ def main():
         logger.info("=== DRY RUN MODE — no orders will be placed ===")
 
     # Idempotency guard (skip in dry-run)
+    run_num = 1
     if not args.dry_run:
-        if not _acquire_lock(logger):
+        acquired, run_num = _acquire_lock(logger, cfg.budget.runs_per_day)
+        if not acquired:
             sys.exit(0)
 
     run_start = time.time()
 
     try:
-        _run(cfg, logger, dry_run=args.dry_run)
+        _run(cfg, logger, dry_run=args.dry_run, run_num=run_num)
     except Exception as e:
         tb = traceback.format_exc()
         logger.error(f"Fatal error:\n{tb}")
         notifier.send_error(cfg, "Fatal error in bot.py", tb)
-        if not args.dry_run:
-            _release_lock()
         sys.exit(1)
-
-    if not args.dry_run:
-        _release_lock()
 
     duration = time.time() - run_start
     logger.info(f"Run complete in {duration:.1f}s")
 
 
-def _run(cfg, logger, dry_run: bool):
+def _run(cfg, logger, dry_run: bool, run_num: int = 1):
     # --- Init client ---
     client = KalshiClient(cfg.api_key_id, cfg.private_key_path)
 
@@ -349,8 +354,9 @@ def _run(cfg, logger, dry_run: bool):
     balance_resp = client.get_balance()
     balance_cents = balance_resp.get("balance", 0)
     balance_usd = balance_cents / 100.0
-    today_budget = min(balance_usd * cfg.budget.balance_pct, cfg.budget.daily_cap_usd)
-    logger.info(f"Balance: ${balance_usd:.2f} | Today's budget: ${today_budget:.2f}")
+    per_run_cap = cfg.budget.daily_cap_usd / cfg.budget.runs_per_day
+    today_budget = min(balance_usd * cfg.budget.balance_pct, per_run_cap)
+    logger.info(f"Balance: ${balance_usd:.2f} | Run {run_num}/{cfg.budget.runs_per_day} budget: ${today_budget:.2f}")
 
     # --- Existing positions (seed series counter) ---
     existing_positions = client.get_positions().get("market_positions", [])
@@ -362,7 +368,7 @@ def _run(cfg, logger, dry_run: bool):
 
     # --- Fetch markets ---
     today = date.today().isoformat()
-    logger.info(f"=== Daily Trading Run: {today} ===")
+    logger.info(f"=== Trading Run {run_num}: {today} ===")
     logger.info(f"Scanning {len(cfg.markets.event_series)} series for open markets...")
 
     markets = _fetch_all_markets(client, cfg, logger)
@@ -374,8 +380,15 @@ def _run(cfg, logger, dry_run: bool):
 
     logger.info(f"Found {len(markets)} tradeable short-term markets")
 
-    # --- Strategy (prices come from market object; orderbooks optional for depth) ---
-    candidates = strat.analyze_markets(markets, {}, cfg)
+    # --- Deep scan: first pass to identify top candidates, then enrich with orderbooks ---
+    first_pass = strat.analyze_markets(markets, {}, cfg)
+    top_tickers = [c.ticker for c in first_pass[:150]]
+    if top_tickers:
+        logger.info(f"Fetching orderbooks for top {len(top_tickers)} candidates...")
+        orderbooks = _fetch_all_orderbooks(client, top_tickers, logger)
+    else:
+        orderbooks = {}
+    candidates = strat.analyze_markets(markets, orderbooks, cfg)
     logger.info(f"Qualified candidates: {len(candidates)}")
 
     selected = strat.select_trades(candidates, today_budget, cfg)

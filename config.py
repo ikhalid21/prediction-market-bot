@@ -49,6 +49,7 @@ class BudgetConfig:
     max_position_usd: float
     min_candidates: int
     max_per_series: int
+    runs_per_day: int = 1
 
 
 @dataclass

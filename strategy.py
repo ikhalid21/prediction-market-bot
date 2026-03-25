@@ -317,7 +317,8 @@ def select_trades(
     for c in candidates:
         by_tier[c.tier].append(c)
 
-    for tier in ("HIGH_PROB", "VALUE", "TAIL"):
+    tier_sequence = ("HIGH_PROB", "VALUE", "TAIL")
+    for i, tier in enumerate(tier_sequence):
         for candidate in by_tier[tier]:
             if tier_remaining[tier] < 0.01:
                 break
@@ -369,5 +370,11 @@ def select_trades(
             tier_remaining[tier] -= cost_usd
             series_count[series] += 1
             selected_sides[series] = candidate.side
+
+        # Roll any unused budget from this tier into the next
+        if i < len(tier_sequence) - 1 and tier_remaining[tier] > 0.01:
+            next_tier = tier_sequence[i + 1]
+            tier_remaining[next_tier] += tier_remaining[tier]
+            tier_remaining[tier] = 0.0
 
     return selected
