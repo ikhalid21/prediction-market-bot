@@ -1,0 +1,355 @@
+2026-03-24 14:16:22,048 [INFO] Environment: DEMO
+2026-03-24 14:16:22,104 [INFO] === Account Status ===
+2026-03-24 14:16:22,246 [ERROR] Failed to get balance: 401 Client Error: Unauthorized for url: https://demo-api.kalshi.co/trade-api/v2/portfolio/balance
+2026-03-24 14:16:30,322 [INFO] Environment: PROD
+2026-03-24 14:16:30,366 [INFO] === Account Status ===
+2026-03-24 14:16:30,468 [ERROR] Failed to get balance: 401 Client Error: Unauthorized for url: https://trading-api.kalshi.com/trade-api/v2/portfolio/balance
+2026-03-24 14:16:41,944 [INFO] Environment: PROD
+2026-03-24 14:16:41,992 [INFO] === Account Status ===
+2026-03-24 14:16:42,327 [ERROR] Failed to get balance: 401 Client Error: Unauthorized for url: https://trading-api.kalshi.com/trade-api/v2/portfolio/balance
+2026-03-24 14:17:44,316 [INFO] Environment: PROD
+2026-03-24 14:17:44,359 [INFO] === Account Status ===
+2026-03-24 14:17:44,445 [INFO] Cash balance:    $220.52
+2026-03-24 14:17:44,445 [INFO] Portfolio value: $120.06
+2026-03-24 14:17:44,479 [INFO] 
+Open positions (7):
+2026-03-24 14:17:44,479 [INFO]   KXCABOUT-26MAR-TGAB: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:44,479 [INFO]   KXINSURRECTION-29-27: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:44,479 [INFO]   KXWTIMAX-26DEC31-T160: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:44,479 [INFO]   KXWTIMAX-26DEC31-T150: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:44,479 [INFO]   KXFEDCHAIRCONFIRM-KWAR: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:44,479 [INFO]   KXRATECUTCOUNT-26DEC31-T0: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:44,479 [INFO]   KXLEAVEPOWELLGOV-26AUG01: 0 contracts ($0.00 exposure)
+2026-03-24 14:17:50,880 [INFO] Environment: PROD
+2026-03-24 14:17:50,924 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:17:51,027 [INFO] Available balance: $220.52
+2026-03-24 14:17:51,027 [INFO] Today's budget: $50.00
+2026-03-24 14:17:51,027 [INFO] Scanning for crypto markets...
+2026-03-24 14:20:58,717 [INFO] Found 209 crypto markets
+2026-03-24 14:20:58,719 [INFO] 
+Selected 5 trades (total: $24.78):
+2026-03-24 14:20:58,719 [INFO]   YES 45x KXCS2GAME-26MAR26RTALL-RT @ 11c = $4.95 | Will ReThink win the ReThink vs. Alliance CS2 match?
+2026-03-24 14:20:58,719 [INFO]   YES 41x KXLOLMAP-26MAR24BIGSLY-1-BIG @ 12c = $4.92 | Will Berlin International Gaming win map 1 in the Berlin Int
+2026-03-24 14:20:58,719 [INFO]   YES 38x KXLOLGAME-26MAR24BIGSLY-BIG @ 13c = $4.94 | Will Berlin International Gaming win the Berlin Internationa
+2026-03-24 14:20:58,719 [INFO]   YES 71x KXBTC-26MAR2415-B69750 @ 7c = $4.97 | Bitcoin price range  on Mar 24, 2026?
+2026-03-24 14:20:58,720 [INFO]   YES 50x KXBTC-26MAR2415-B69650 @ 10c = $5.00 | Bitcoin price range  on Mar 24, 2026?
+2026-03-24 14:20:58,720 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 14:24:13,822 [INFO] Environment: PROD
+2026-03-24 14:24:13,865 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:24:13,952 [INFO] Available balance: $220.52
+2026-03-24 14:24:13,952 [INFO] Today's budget: $50.00
+2026-03-24 14:24:13,952 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:24:15,025 [INFO] Found 801 liquid markets across 11 series
+2026-03-24 14:24:15,029 [INFO] 
+Selected 5 trades (total: $24.95):
+2026-03-24 14:24:15,029 [INFO]   YES 71x KXBTCY-27JAN0100-T149999.99 @ 7c = $4.97 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:15,029 [INFO]   YES 125x KXBTCY-27JAN0100-B92500 @ 4c = $5.00 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:15,030 [INFO]   YES 100x KXBTCY-27JAN0100-B87500 @ 5c = $5.00 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:15,030 [INFO]   YES 100x KXBTCY-27JAN0100-B82500 @ 5c = $5.00 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:15,030 [INFO]   YES 83x KXBTCY-27JAN0100-B77500 @ 6c = $4.98 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:15,030 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 14:24:28,196 [INFO] Environment: PROD
+2026-03-24 14:24:28,239 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:24:28,323 [INFO] Available balance: $220.52
+2026-03-24 14:24:28,323 [INFO] Today's budget: $50.00
+2026-03-24 14:24:28,323 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:24:29,259 [INFO] Found 801 liquid markets across 11 series
+2026-03-24 14:24:29,262 [INFO] 
+Selected 5 trades (total: $24.92):
+2026-03-24 14:24:29,262 [INFO]   YES 71x KXBTCY-27JAN0100-T149999.99 @ 7c = $4.97 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:29,263 [INFO]   YES 125x KXBTCY-27JAN0100-B92500 @ 4c = $5.00 | BTC price  on Jan 1, 2027?
+2026-03-24 14:24:29,263 [INFO]   YES 71x KXETHY-27JAN0100-T1000.00 @ 7c = $4.97 | ETH price  on Jan 1, 2027?
+2026-03-24 14:24:29,263 [INFO]   YES 125x KXETHY-27JAN0100-B3125 @ 4c = $5.00 | ETH price  on Jan 1, 2027?
+2026-03-24 14:24:29,263 [INFO]   YES 166x KXBTCD-26MAR2417-T71299.99 @ 3c = $4.98 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:24:29,263 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 14:25:21,191 [INFO] Environment: PROD
+2026-03-24 14:25:21,235 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:25:21,345 [INFO] Available balance: $220.52
+2026-03-24 14:25:21,345 [INFO] Today's budget: $50.00
+2026-03-24 14:25:21,345 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:25:22,282 [INFO] Found 801 liquid markets across 11 series
+2026-03-24 14:25:22,284 [INFO] 
+Selected 5 trades (total: $24.92):
+2026-03-24 14:25:22,284 [INFO]   YES 71x KXBTCY-27JAN0100-T149999.99 @ 7c = $4.97 | BTC price  on Jan 1, 2027?
+2026-03-24 14:25:22,285 [INFO]   YES 125x KXBTCY-27JAN0100-B92500 @ 4c = $5.00 | BTC price  on Jan 1, 2027?
+2026-03-24 14:25:22,285 [INFO]   YES 71x KXETHY-27JAN0100-T1000.00 @ 7c = $4.97 | ETH price  on Jan 1, 2027?
+2026-03-24 14:25:22,285 [INFO]   YES 125x KXETHY-27JAN0100-B3125 @ 4c = $5.00 | ETH price  on Jan 1, 2027?
+2026-03-24 14:25:22,285 [INFO]   YES 166x KXBTCD-26MAR2417-T71299.99 @ 3c = $4.98 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:25:22,285 [INFO] Placing order: YES 71x KXBTCY-27JAN0100-T149999.99 @ 7c ($4.97)
+2026-03-24 14:25:22,315 [INFO]   -> Order placed: 52826401-25ed-4cb0-9979-85ce890663e7
+2026-03-24 14:25:22,315 [INFO] Placing order: YES 125x KXBTCY-27JAN0100-B92500 @ 4c ($5.00)
+2026-03-24 14:25:22,347 [INFO]   -> Order placed: 879d843b-4124-402f-959c-dbe44173a2bf
+2026-03-24 14:25:22,347 [INFO] Placing order: YES 71x KXETHY-27JAN0100-T1000.00 @ 7c ($4.97)
+2026-03-24 14:25:22,381 [INFO]   -> Order placed: 134c4ea6-b16d-44b7-b0cb-870aef68c80c
+2026-03-24 14:25:22,381 [INFO] Placing order: YES 125x KXETHY-27JAN0100-B3125 @ 4c ($5.00)
+2026-03-24 14:25:22,412 [INFO]   -> Order placed: 1917079c-0a09-4020-918a-dbd4aac0764c
+2026-03-24 14:25:22,413 [INFO] Placing order: YES 166x KXBTCD-26MAR2417-T71299.99 @ 3c ($4.98)
+2026-03-24 14:25:22,444 [INFO]   -> Order placed: 8d7b6e25-eda6-4796-8620-4be7254ec825
+2026-03-24 14:25:22,444 [INFO] 
+=== Summary ===
+2026-03-24 14:25:22,444 [INFO] Trades placed: 5/5
+2026-03-24 14:25:22,444 [INFO] Failed: 0
+2026-03-24 14:25:22,444 [INFO] Total spent: $24.92
+2026-03-24 14:25:22,445 [INFO] Trade log saved: /Users/ikhalid/kalshi-bot/logs/trades_2026-03-24.json
+2026-03-24 14:30:14,451 [INFO] Environment: PROD
+2026-03-24 14:30:14,497 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:30:14,583 [INFO] Available balance: $215.20
+2026-03-24 14:30:14,583 [INFO] Today's budget: $50.00
+2026-03-24 14:30:14,583 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:30:15,462 [INFO] Found 801 liquid markets across 11 series
+2026-03-24 14:30:15,466 [INFO] KXBTCY peak: below 67500.0 @ 7.8% implied
+2026-03-24 14:30:15,466 [INFO] KXETHY peak: below 1875.0 @ 10.7% implied
+2026-03-24 14:30:15,466 [INFO] 
+Selected 5 trades (total: $23.33):
+2026-03-24 14:30:15,466 [INFO]   YES 50x KXETHY-27JAN0100-B1875 @ 10c = $5.00 | ETH price  on Jan 1, 2027?
+2026-03-24 14:30:15,466 [INFO]   YES 50x KXETHY-27JAN0100-B1625 @ 10c = $5.00 | ETH price  on Jan 1, 2027?
+2026-03-24 14:30:15,466 [INFO]   YES 71x KXBTCY-27JAN0100-B67500 @ 7c = $4.97 | BTC price  on Jan 1, 2027?
+2026-03-24 14:30:15,466 [INFO]   YES 33x KXINX-26MAR24H1600-B6537 @ 15c = $4.95 | Will the S&P 500 be between 6525 and 6549.9999 on Mar 24, 20
+2026-03-24 14:30:15,466 [INFO]   YES 31x KXRATECUTCOUNT-26DEC31-T3 @ 11c = $3.41 | Will the Fed cut rates 3 times?
+2026-03-24 14:30:15,466 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 14:36:10,912 [INFO] Environment: PROD
+2026-03-24 14:36:10,961 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:36:11,044 [INFO] Available balance: $215.20
+2026-03-24 14:36:11,044 [INFO] Today's budget: $50.00
+2026-03-24 14:36:11,044 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:36:11,794 [INFO] Found 504 tradeable short-term markets
+2026-03-24 14:36:11,795 [INFO] KXBTC: 45 markets, peak implied=20.0%
+2026-03-24 14:36:11,796 [INFO] KXETH: 20 markets, peak implied=54.5%
+2026-03-24 14:36:11,796 [INFO] KXBTCD: 207 markets, peak implied=99.5%
+2026-03-24 14:36:11,797 [INFO] KXETHD: 103 markets, peak implied=99.5%
+2026-03-24 14:36:11,797 [INFO] KXSOLD: 100 markets, peak implied=99.5%
+2026-03-24 14:36:11,797 [INFO] KXINX: 29 markets, peak implied=42.5%
+2026-03-24 14:36:11,797 [INFO]   Allocation: tail = $7.46
+2026-03-24 14:36:11,797 [INFO] 
+Selected 2 trades (total: $7.46):
+2026-03-24 14:36:11,797 [INFO]   YES 26x KXBTCD-26MAR2717-T72399.99 @ 19c = $4.94 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 14:36:11,797 [INFO]   YES 14x KXBTCD-26MAR2415-T69699.99 @ 18c = $2.52 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:36:11,797 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 14:37:27,307 [INFO] Environment: PROD
+2026-03-24 14:37:27,356 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:37:27,450 [INFO] Available balance: $215.20
+2026-03-24 14:37:27,450 [INFO] Today's budget: $50.00
+2026-03-24 14:37:27,450 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:37:28,161 [INFO] Found 510 tradeable short-term markets
+2026-03-24 14:37:28,162 [INFO] KXBTC: 45 markets, peak implied=20.0%
+2026-03-24 14:37:28,162 [INFO] KXETH: 19 markets, peak implied=67.5%
+2026-03-24 14:37:28,163 [INFO] KXBTCD: 209 markets, peak implied=99.5%
+2026-03-24 14:37:28,163 [INFO] KXETHD: 104 markets, peak implied=99.5%
+2026-03-24 14:37:28,164 [INFO] KXSOLD: 105 markets, peak implied=99.5%
+2026-03-24 14:37:28,164 [INFO] KXINX: 28 markets, peak implied=32.5%
+2026-03-24 14:37:28,164 [INFO]   Allocation: high_prob = $13.51
+2026-03-24 14:37:28,164 [INFO]   Allocation: tail = $7.47
+2026-03-24 14:37:28,165 [INFO] 
+Selected 5 trades (total: $20.98):
+2026-03-24 14:37:28,165 [INFO]   YES 7x KXETH-26MAR2415-B2130 @ 68c = $4.76 | Ethereum price at Mar 24, 2026 at 3pm EDT?
+2026-03-24 14:37:28,165 [INFO]   YES 5x KXBTCD-26MAR2417-T68799.99 @ 91c = $4.55 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:37:28,165 [INFO]   YES 5x KXBTCD-26MAR2415-T69399.99 @ 84c = $4.20 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:37:28,165 [INFO]   YES 33x KXINX-26MAR24H1600-B6612 @ 15c = $4.95 | Will the S&P 500 be between 6600 and 6624.9999 on Mar 24, 20
+2026-03-24 14:37:28,165 [INFO]   YES 28x KXETHD-26MAR2717-T2349.99 @ 9c = $2.52 | Ethereum price at Mar 27, 2026 at 5pm EDT?
+2026-03-24 14:37:28,165 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 14:38:29,874 [INFO] Environment: PROD
+2026-03-24 14:38:29,921 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 14:38:30,031 [INFO] Available balance: $215.20
+2026-03-24 14:38:30,031 [INFO] Today's budget: $50.00
+2026-03-24 14:38:30,031 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 14:38:30,791 [INFO] Found 510 tradeable short-term markets
+2026-03-24 14:38:30,792 [INFO] KXBTC: 44 markets, peak implied=20.0%
+2026-03-24 14:38:30,792 [INFO] KXETH: 20 markets, peak implied=70.5%
+2026-03-24 14:38:30,792 [INFO] KXBTCD: 207 markets, peak implied=99.5%
+2026-03-24 14:38:30,793 [INFO] KXETHD: 104 markets, peak implied=99.5%
+2026-03-24 14:38:30,793 [INFO] KXSOLD: 106 markets, peak implied=99.5%
+2026-03-24 14:38:30,793 [INFO] KXINX: 29 markets, peak implied=44.5%
+2026-03-24 14:38:30,794 [INFO]   Allocation: high_prob = $13.30
+2026-03-24 14:38:30,794 [INFO]   Allocation: value = $4.80
+2026-03-24 14:38:30,794 [INFO]   Allocation: tail = $7.50
+2026-03-24 14:38:30,794 [INFO] 
+Selected 6 trades (total: $25.60):
+2026-03-24 14:38:30,794 [INFO]   YES 5x KXBTCD-26MAR2417-T68799.99 @ 91c = $4.55 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:38:30,794 [INFO]   YES 5x KXBTCD-26MAR2415-T69399.99 @ 85c = $4.25 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 14:38:30,794 [INFO]   YES 6x KXETHD-26MAR2415-T2119.99 @ 75c = $4.50 | Ethereum price at Mar 24, 2026 at 3pm EDT?
+2026-03-24 14:38:30,794 [INFO]   YES 15x KXINX-26MAR24H1600-B6562 @ 32c = $4.80 | Will the S&P 500 be between 6550 and 6574.9999 on Mar 24, 20
+2026-03-24 14:38:30,794 [INFO]   YES 22x KXSOLD-26MAR2717-T94.9999 @ 22c = $4.84 | SOL price  on Mar 27, 2026?
+2026-03-24 14:38:30,794 [INFO]   YES 14x KXSOLD-26MAR2717-T95.9999 @ 19c = $2.66 | SOL price  on Mar 27, 2026?
+2026-03-24 14:38:30,794 [INFO]   [HIGH_PROB] YES 5x KXBTCD-26MAR2417-T68799.99 @ 91c ($4.55) | win%=90% | High-prob (90%) 1c-spread vol=30520
+2026-03-24 14:38:30,831 [INFO]     -> Placed (id=6e56e917-2073-4f0d-a825-8703f160b8e3, filled=0.00)
+2026-03-24 14:38:30,832 [INFO]   [HIGH_PROB] YES 5x KXBTCD-26MAR2415-T69399.99 @ 85c ($4.25) | win%=84% | High-prob (84%) 1c-spread vol=43867
+2026-03-24 14:38:30,864 [INFO]     -> Placed (id=6e794969-2c4b-4c47-9001-7e015c87b159, filled=0.00)
+2026-03-24 14:38:30,864 [INFO]   [HIGH_PROB] YES 6x KXETHD-26MAR2415-T2119.99 @ 75c ($4.50) | win%=74% | High-prob (74%) 1c-spread vol=19668
+2026-03-24 14:38:30,899 [INFO]     -> Placed (id=53afffdf-a127-4d24-b54e-1994b8117612, filled=6.00)
+2026-03-24 14:38:30,899 [INFO]   [VALUE] YES 15x KXINX-26MAR24H1600-B6562 @ 32c ($4.80) | win%=32% | Value zone (32% implied) tight spread=1c vol=1834
+2026-03-24 14:38:30,932 [INFO]     -> Placed (id=6face737-6841-4b7e-8287-92607135f7a2, filled=15.00)
+2026-03-24 14:38:30,932 [INFO]   [TAIL] YES 22x KXSOLD-26MAR2717-T94.9999 @ 22c ($4.84) | win%=26% | Smart tail (22% implied) asymmetric payoff, vol=202
+2026-03-24 14:38:30,965 [INFO]     -> Placed (id=7d0bc49d-589e-44b3-b2a2-23aa07da6767, filled=22.00)
+2026-03-24 14:38:30,965 [INFO]   [TAIL] YES 14x KXSOLD-26MAR2717-T95.9999 @ 19c ($2.66) | win%=21% | Smart tail (18% implied) asymmetric payoff, vol=168
+2026-03-24 14:38:31,000 [INFO]     -> Placed (id=5d353afa-dc7e-4cd9-80e9-bca544ec7527, filled=14.00)
+2026-03-24 14:38:31,000 [INFO] 
+=== Summary ===
+2026-03-24 14:38:31,000 [INFO] Trades placed: 6/6
+2026-03-24 14:38:31,001 [INFO] Failed: 0
+2026-03-24 14:38:31,001 [INFO] Total spent: $25.60
+2026-03-24 14:38:31,003 [INFO] Trade log saved: /Users/ikhalid/kalshi-bot/logs/trades_2026-03-24.json
+2026-03-24 15:09:15,372 [INFO] Environment: PROD
+2026-03-24 15:09:15,477 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 15:09:15,574 [INFO] Available balance: $194.32
+2026-03-24 15:09:15,574 [INFO] Today's budget: $50.00
+2026-03-24 15:09:15,574 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 15:09:16,400 [INFO] Found 502 tradeable short-term markets
+2026-03-24 15:09:16,401 [INFO] KXBTC: 48 markets, peak implied=23.0%
+2026-03-24 15:09:16,401 [INFO] KXETH: 20 markets, peak implied=56.0%
+2026-03-24 15:09:16,401 [INFO] KXBTCD: 208 markets, peak implied=99.5%
+2026-03-24 15:09:16,402 [INFO] KXETHD: 104 markets, peak implied=99.5%
+2026-03-24 15:09:16,402 [INFO] KXSOLD: 95 markets, peak implied=99.5%
+2026-03-24 15:09:16,402 [INFO] KXINX: 27 markets, peak implied=49.0%
+2026-03-24 15:09:16,402 [INFO]   Allocation: value = $14.67
+2026-03-24 15:09:16,403 [INFO]   Allocation: tail = $19.87
+2026-03-24 15:09:16,403 [INFO] 
+Selected 7 trades (total: $34.54):
+2026-03-24 15:09:16,403 [INFO]   YES 11x KXBTCD-26MAR2717-T69899.99 @ 45c = $4.95 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 15:09:16,403 [INFO]   YES 9x KXETHD-26MAR2717-T2109.99 @ 53c = $4.77 | Ethereum price at Mar 27, 2026 at 5pm EDT?
+2026-03-24 15:09:16,403 [INFO]   YES 9x KXSOLD-26MAR2717-T88.9999 @ 55c = $4.95 | SOL price  on Mar 27, 2026?
+2026-03-24 15:09:16,403 [INFO]   YES 83x KXINX-26MAR27H1600-T6250 @ 6c = $4.98 | Will the S&P 500 be below 6250 on Mar 27, 2026 at 4pm EDT?
+2026-03-24 15:09:16,403 [INFO]   YES 83x KXINX-26MAR27H1600-B6437 @ 6c = $4.98 | Will the S&P 500 be between 6425 and 6449.9999 on Mar 27, 20
+2026-03-24 15:09:16,403 [INFO]   YES 62x KXBTC-26MAR2717-B70150 @ 8c = $4.96 | Bitcoin price range  on Mar 27, 2026?
+2026-03-24 15:09:16,403 [INFO]   YES 45x KXETHD-26MAR2717-T2309.99 @ 11c = $4.95 | Ethereum price at Mar 27, 2026 at 5pm EDT?
+2026-03-24 15:09:16,403 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 15:12:09,023 [INFO] Environment: PROD
+2026-03-24 15:12:09,071 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 15:12:09,171 [INFO] Available balance: $194.32
+2026-03-24 15:12:09,171 [INFO] Today's budget: $50.00
+2026-03-24 15:12:09,171 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 15:12:09,990 [INFO] Found 496 tradeable short-term markets
+2026-03-24 15:12:09,991 [INFO] KXBTC: 46 markets, peak implied=22.5%
+2026-03-24 15:12:09,991 [INFO] KXETH: 19 markets, peak implied=65.5%
+2026-03-24 15:12:09,992 [INFO] KXBTCD: 208 markets, peak implied=99.5%
+2026-03-24 15:12:09,992 [INFO] KXETHD: 104 markets, peak implied=99.5%
+2026-03-24 15:12:09,993 [INFO] KXSOLD: 92 markets, peak implied=99.5%
+2026-03-24 15:12:09,993 [INFO] KXINX: 27 markets, peak implied=52.0%
+2026-03-24 15:12:09,993 [INFO]   Allocation: tail = $14.59
+2026-03-24 15:12:09,993 [INFO] 
+Selected 3 trades (total: $14.59):
+2026-03-24 15:12:09,993 [INFO]   YES 27x KXBTCD-26MAR2417-T70049.99 @ 18c = $4.86 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 15:12:09,993 [INFO]   YES 23x KXBTC-26MAR2417-B69775 @ 21c = $4.83 | Bitcoin price range  on Mar 24, 2026?
+2026-03-24 15:12:09,994 [INFO]   YES 35x KXBTCD-26MAR2717-T73399.99 @ 14c = $4.90 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 15:12:09,994 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 15:14:03,277 [INFO] Environment: PROD
+2026-03-24 15:14:03,323 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 15:14:03,422 [INFO] Available balance: $194.32
+2026-03-24 15:14:03,422 [INFO] Today's budget: $50.00
+2026-03-24 15:14:03,422 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 15:14:04,247 [INFO] Found 498 tradeable short-term markets
+2026-03-24 15:14:04,248 [INFO] KXBTC: 47 markets, peak implied=23.0%
+2026-03-24 15:14:04,248 [INFO] KXETH: 21 markets, peak implied=63.5%
+2026-03-24 15:14:04,248 [INFO] KXBTCD: 208 markets, peak implied=99.5%
+2026-03-24 15:14:04,249 [INFO] KXETHD: 104 markets, peak implied=99.5%
+2026-03-24 15:14:04,249 [INFO] KXSOLD: 91 markets, peak implied=99.5%
+2026-03-24 15:14:04,249 [INFO] KXINX: 27 markets, peak implied=51.0%
+2026-03-24 15:14:04,249 [INFO]   Allocation: tail = $7.10
+2026-03-24 15:14:04,249 [INFO] 
+Selected 3 trades (total: $7.10):
+2026-03-24 15:14:04,249 [INFO]   YES 13x KXBTCD-26MAR2417-T70049.99 @ 18c = $2.34 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 15:14:04,249 [INFO]   YES 17x KXBTC-26MAR2416-B69450 @ 14c = $2.38 | Bitcoin price range  on Mar 24, 2026?
+2026-03-24 15:14:04,249 [INFO]   YES 17x KXBTCD-26MAR2717-T73399.99 @ 14c = $2.38 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 15:14:04,249 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 16:28:50,156 [INFO] Environment: PROD
+2026-03-24 16:28:50,267 [INFO] === Account Status ===
+2026-03-24 16:28:50,369 [INFO] Cash balance:    $194.32
+2026-03-24 16:28:50,369 [INFO] Portfolio value: $150.16
+2026-03-24 16:28:50,410 [INFO] 
+Open positions (16):
+2026-03-24 16:28:50,410 [INFO]   KXINX-26MAR24H1600-B6562: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXBTCD-26MAR2417-T68799.99: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXBTCD-26MAR2417-T71299.99: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXSOLD-26MAR2717-T94.9999: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXSOLD-26MAR2717-T95.9999: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXETHY-27JAN0100-T1000.00: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXETHY-27JAN0100-B3125: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXBTCY-27JAN0100-B92500: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXBTCY-27JAN0100-T149999.99: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXCABOUT-26MAR-TGAB: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,410 [INFO]   KXINSURRECTION-29-27: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,411 [INFO]   KXWTIMAX-26DEC31-T160: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,411 [INFO]   KXWTIMAX-26DEC31-T150: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,411 [INFO]   KXFEDCHAIRCONFIRM-KWAR: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,411 [INFO]   KXRATECUTCOUNT-26DEC31-T0: 0 contracts ($0.00 exposure)
+2026-03-24 16:28:50,411 [INFO]   KXLEAVEPOWELLGOV-26AUG01: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,055 [INFO] Environment: PROD
+2026-03-24 16:30:37,107 [INFO] === Account Status ===
+2026-03-24 16:30:37,204 [INFO] Cash balance:    $194.32
+2026-03-24 16:30:37,204 [INFO] Portfolio value: $149.76
+2026-03-24 16:30:37,245 [INFO] 
+Open positions (16):
+2026-03-24 16:30:37,245 [INFO]   KXINX-26MAR24H1600-B6562: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXBTCD-26MAR2417-T68799.99: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXBTCD-26MAR2417-T71299.99: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXSOLD-26MAR2717-T94.9999: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXSOLD-26MAR2717-T95.9999: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXETHY-27JAN0100-T1000.00: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXETHY-27JAN0100-B3125: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXBTCY-27JAN0100-B92500: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXBTCY-27JAN0100-T149999.99: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXCABOUT-26MAR-TGAB: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXINSURRECTION-29-27: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXWTIMAX-26DEC31-T160: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXWTIMAX-26DEC31-T150: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXFEDCHAIRCONFIRM-KWAR: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXRATECUTCOUNT-26DEC31-T0: 0 contracts ($0.00 exposure)
+2026-03-24 16:30:37,245 [INFO]   KXLEAVEPOWELLGOV-26AUG01: 0 contracts ($0.00 exposure)
+2026-03-24 19:34:07,705 [INFO] Environment: PROD
+2026-03-24 19:34:07,752 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 19:34:07,906 [INFO] Available balance: $214.32
+2026-03-24 19:34:07,907 [INFO] Today's budget: $50.00
+2026-03-24 19:34:07,907 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 19:34:08,740 [INFO] Found 523 tradeable short-term markets
+2026-03-24 19:34:08,741 [INFO] KXBTC: 49 markets, peak implied=19.0%
+2026-03-24 19:34:08,741 [INFO] KXETH: 24 markets, peak implied=50.0%
+2026-03-24 19:34:08,741 [INFO] KXBTCD: 226 markets, peak implied=99.5%
+2026-03-24 19:34:08,742 [INFO] KXETHD: 106 markets, peak implied=99.5%
+2026-03-24 19:34:08,742 [INFO] KXSOLD: 101 markets, peak implied=99.5%
+2026-03-24 19:34:08,743 [INFO] KXINX: 17 markets, peak implied=8.5%
+2026-03-24 19:34:08,743 [INFO]   Allocation: tail = $7.27
+2026-03-24 19:34:08,743 [INFO] 
+Selected 3 trades (total: $7.27):
+2026-03-24 19:34:08,743 [INFO]   YES 13x KXBTCD-26MAR2717-T73399.99 @ 19c = $2.47 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 19:34:08,743 [INFO]   YES 12x KXBTC-26MAR2420-B70650 @ 20c = $2.40 | Bitcoin price range  on Mar 24, 2026?
+2026-03-24 19:34:08,743 [INFO]   YES 15x KXBTCD-26MAR2717-T73899.99 @ 16c = $2.40 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 19:34:08,743 [INFO] 
+[DRY RUN] No orders placed.
+2026-03-24 19:35:21,238 [INFO] Environment: PROD
+2026-03-24 19:35:21,287 [INFO] === Daily Trading Run: 2026-03-24 ===
+2026-03-24 19:35:21,379 [INFO] Available balance: $214.32
+2026-03-24 19:35:21,379 [INFO] Today's budget: $50.00
+2026-03-24 19:35:21,379 [INFO] Scanning for crypto & prediction markets...
+2026-03-24 19:35:22,195 [INFO] Found 531 tradeable short-term markets
+2026-03-24 19:35:22,195 [INFO] KXBTC: 49 markets, peak implied=19.5%
+2026-03-24 19:35:22,196 [INFO] KXETH: 23 markets, peak implied=41.5%
+2026-03-24 19:35:22,196 [INFO] KXBTCD: 225 markets, peak implied=99.5%
+2026-03-24 19:35:22,197 [INFO] KXETHD: 106 markets, peak implied=99.5%
+2026-03-24 19:35:22,197 [INFO] KXSOLD: 111 markets, peak implied=99.5%
+2026-03-24 19:35:22,197 [INFO] KXINX: 17 markets, peak implied=8.5%
+2026-03-24 19:35:22,198 [INFO]   Allocation: tail = $7.21
+2026-03-24 19:35:22,198 [INFO] 
+Selected 3 trades (total: $7.21):
+2026-03-24 19:35:22,198 [INFO]   YES 13x KXBTCD-26MAR2717-T73399.99 @ 19c = $2.47 | Bitcoin price  on Mar 27, 2026?
+2026-03-24 19:35:22,198 [INFO]   YES 13x KXBTCD-26MAR2420-T70899.99 @ 18c = $2.34 | Bitcoin price  on Mar 24, 2026?
+2026-03-24 19:35:22,198 [INFO]   YES 12x KXBTC-26MAR2420-B70650 @ 20c = $2.40 | Bitcoin price range  on Mar 24, 2026?
+2026-03-24 19:35:22,198 [INFO]   [TAIL] YES 13x KXBTCD-26MAR2717-T73399.99 @ 19c ($2.47) | win%=21% | Tail (18%) high-vol=3375, 1:$4 payoff
+2026-03-24 19:35:22,234 [INFO]     -> Placed (id=4f1abfff-7f05-499b-91ae-09fe7cb1588f, filled=13.00)
+2026-03-24 19:35:22,234 [INFO]   [TAIL] YES 13x KXBTCD-26MAR2420-T70899.99 @ 18c ($2.34) | win%=20% | Tail (18%) high-vol=17526, 1:$5 payoff
+2026-03-24 19:35:22,270 [INFO]     -> Placed (id=eefb5eae-4b23-4392-81ce-aaccb6b6cd99, filled=13.00)
+2026-03-24 19:35:22,270 [INFO]   [TAIL] YES 12x KXBTC-26MAR2420-B70650 @ 20c ($2.40) | win%=22% | Tail (19%) high-vol=713, 1:$4 payoff
+2026-03-24 19:35:22,310 [INFO]     -> Placed (id=bdd77f86-7ab6-4e32-8ea0-69801bd57d31, filled=1.00)
+2026-03-24 19:35:22,310 [INFO] 
+=== Summary ===
+2026-03-24 19:35:22,310 [INFO] Trades placed: 3/3
+2026-03-24 19:35:22,310 [INFO] Failed: 0
+2026-03-24 19:35:22,310 [INFO] Total spent: $7.21
+2026-03-24 19:35:22,311 [INFO] Trade log saved: /Users/ikhalid/kalshi-bot/logs/trades_2026-03-24.json
