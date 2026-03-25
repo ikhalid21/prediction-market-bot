@@ -1,0 +1,106 @@
+{
+  "date": "2026-03-24T17:00:11.495227",
+  "portfolio": {
+    "holdings": {
+      "VOO": {
+        "name": "S&P 500 ETF",
+        "price": 602.3800048828125,
+        "shares": 6,
+        "value": 3614.280029296875,
+        "cost": 3790.14,
+        "day_change": -12.2999267578125,
+        "day_pct": -0.3391605012672447,
+        "total_pnl": -175.85997070312487,
+        "total_pct": -4.6399333719367855
+      },
+      "QQQ": {
+        "name": "Nasdaq 100 ETF",
+        "price": 583.97998046875,
+        "shares": 3,
+        "value": 1751.93994140625,
+        "cost": 1845.0,
+        "day_change": -12.06005859375,
+        "day_pct": -0.6836767910289115,
+        "total_pnl": -93.06005859375,
+        "total_pct": -5.043905614837398
+      },
+      "KTOS": {
+        "name": "Kratos Defense",
+        "price": 77.48999786376953,
+        "shares": 11.1,
+        "value": 860.1389762878417,
+        "cost": 1003.5,
+        "day_change": -68.82005081176757,
+        "day_pct": -7.408297761703995,
+        "total_pnl": -143.36102371215827,
+        "total_pct": -14.286101017654037
+      },
+      "PLTR": {
+        "name": "Palantir",
+        "price": 154.77999877929688,
+        "shares": 5,
+        "value": 773.8999938964844,
+        "cost": 719.08,
+        "day_change": -30.29998779296875,
+        "day_pct": -3.7677180406439352,
+        "total_pnl": 54.819993896484334,
+        "total_pct": 7.623629345341872
+      },
+      "SCHD": {
+        "name": "Dividend ETF",
+        "price": 30.639999389648438,
+        "shares": 25,
+        "value": 765.9999847412109,
+        "cost": 788.25,
+        "day_change": 2.4999618530273438,
+        "day_pct": 0.32743441756169656,
+        "total_pnl": -22.250015258789062,
+        "total_pct": -2.8227104673376546
+      },
+      "NVDA": {
+        "name": "Nvidia",
+        "price": 175.1999969482422,
+        "shares": 3,
+        "value": 525.5999908447266,
+        "cost": 543.81,
+        "day_change": -1.32000732421875,
+        "day_pct": -0.2505138026276844,
+        "total_pnl": -18.210009155273383,
+        "total_pct": -3.3485977005338974
+      },
+      "SATS": {
+        "name": "EchoStar",
+        "price": 110.83999633789062,
+        "shares": 2,
+        "value": 221.67999267578125,
+        "cost": 215.63,
+        "day_change": 2.6999969482421875,
+        "day_pct": 1.2329879445251237,
+        "total_pnl": 6.0499926757812545,
+        "total_pct": 2.805728644335786
+      }
+    },
+    "total_value": 8513.53890914917,
+    "total_cost": 8905.409999999998,
+    "total_pnl": -391.8710908508274,
+    "total_day_change": -119.60007247924804,
+    "cash": 1094.59,
+    "portfolio_total": 9608.12890914917
+  },
+  "opportunities": [
+    {
+      "ticker": "GOOGL",
+      "type": "DIP",
+      "price": 290.44000244140625,
+      "change_pct": -3.846916245483134,
+      "message": "GOOGL down -3.8% today ($290.44) \u2014 potential buy opportunity"
+    },
+    {
+      "ticker": "COIN",
+      "type": "DIP",
+      "price": 181.0399932861328,
+      "change_pct": -9.7597459413841,
+      "message": "COIN down -9.8% today ($181.04) \u2014 potential buy opportunity"
+    }
+  ]
+}
