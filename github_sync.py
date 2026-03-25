@@ -6,6 +6,7 @@ Never raises — sync failures must never crash the bot.
 import base64
 import logging
 import os
+from typing import Optional
 
 import requests
 
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 _API = "https://api.github.com"
 
 
-def _get_file_sha(token: str, repo: str, path: str, branch: str) -> str | None:
+def _get_file_sha(token: str, repo: str, path: str, branch: str) -> Optional[str]:
     """Return the blob SHA of a file on the branch, or None if it doesn't exist."""
     url = f"{_API}/repos/{repo}/contents/{path}"
     resp = requests.get(
