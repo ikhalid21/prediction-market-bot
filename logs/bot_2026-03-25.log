@@ -1,0 +1,34 @@
+2026-03-25 12:00:00,779 [INFO] Environment: PROD
+2026-03-25 12:00:00,913 [INFO] === Daily Trading Run: 2026-03-25 ===
+2026-03-25 12:00:01,031 [INFO] Available balance: $190.50
+2026-03-25 12:00:01,031 [INFO] Today's budget: $50.00
+2026-03-25 12:00:01,031 [INFO] Scanning for crypto & prediction markets...
+2026-03-25 12:00:01,859 [INFO] Found 466 tradeable short-term markets
+2026-03-25 12:00:01,860 [INFO] KXBTC: 40 markets, peak implied=12.5%
+2026-03-25 12:00:01,860 [INFO] KXETH: 17 markets, peak implied=47.5%
+2026-03-25 12:00:01,861 [INFO] KXBTCD: 189 markets, peak implied=99.5%
+2026-03-25 12:00:01,862 [INFO] KXETHD: 94 markets, peak implied=99.5%
+2026-03-25 12:00:01,863 [INFO] KXSOLD: 96 markets, peak implied=99.5%
+2026-03-25 12:00:01,863 [INFO] KXINX: 30 markets, peak implied=27.5%
+2026-03-25 12:00:01,864 [INFO]   Allocation: value = $4.60
+2026-03-25 12:00:01,864 [INFO]   Allocation: tail = $7.23
+2026-03-25 12:00:01,864 [INFO] 
+Selected 4 trades (total: $11.83):
+2026-03-25 12:00:01,864 [INFO]   YES 10x KXBTCD-26MAR2517-T70899.99 @ 46c = $4.60 | Bitcoin price  on Mar 25, 2026?
+2026-03-25 12:00:01,864 [INFO]   YES 13x KXBTCD-26MAR2717-T73399.99 @ 19c = $2.47 | Bitcoin price  on Mar 27, 2026?
+2026-03-25 12:00:01,864 [INFO]   YES 13x KXETH-26MAR2717-B2170 @ 18c = $2.34 | Ethereum price at Mar 27, 2026 at 5pm EDT?
+2026-03-25 12:00:01,865 [INFO]   YES 22x KXINX-26MAR27H1600-B6662 @ 11c = $2.42 | Will the S&P 500 be between 6650 and 6674.9999 on Mar 27, 20
+2026-03-25 12:00:01,865 [INFO]   [VALUE] YES 10x KXBTCD-26MAR2517-T70899.99 @ 46c ($4.60) | win%=47% | Value (47%) @ bid, spread=2c, vol=31914
+2026-03-25 12:00:01,905 [INFO]     -> Placed (id=530da1b3-c6f6-4d23-bd54-5ac8a4bcc3f2, filled=10.00)
+2026-03-25 12:00:01,905 [INFO]   [TAIL] YES 13x KXBTCD-26MAR2717-T73399.99 @ 19c ($2.47) | win%=21% | Tail (18%) high-vol=3664, 1:$4 payoff
+2026-03-25 12:00:01,952 [INFO]     -> Placed (id=a539627c-d980-4ef3-b6f0-3872f3000fa7, filled=13.00)
+2026-03-25 12:00:01,953 [INFO]   [TAIL] YES 13x KXETH-26MAR2717-B2170 @ 18c ($2.34) | win%=20% | Tail (18%) high-vol=719, 1:$5 payoff
+2026-03-25 12:00:01,997 [INFO]     -> Placed (id=71dbfbe6-5948-4821-b32e-6d1f6c9090cc, filled=13.00)
+2026-03-25 12:00:01,997 [INFO]   [TAIL] YES 22x KXINX-26MAR27H1600-B6662 @ 11c ($2.42) | win%=12% | Tail (11%) high-vol=1308, 1:$8 payoff
+2026-03-25 12:00:02,040 [INFO]     -> Placed (id=6b8663f5-e828-4bdf-877e-cebdcfd95165, filled=3.00)
+2026-03-25 12:00:02,040 [INFO] 
+=== Summary ===
+2026-03-25 12:00:02,041 [INFO] Trades placed: 4/4
+2026-03-25 12:00:02,041 [INFO] Failed: 0
+2026-03-25 12:00:02,041 [INFO] Total spent: $11.83
+2026-03-25 12:00:02,043 [INFO] Trade log saved: /Users/ikhalid/kalshi-bot/logs/trades_2026-03-25.json
