@@ -90,20 +90,19 @@ def sync_logs(cfg) -> None:
         logger.debug("[github_sync] No GitHub config — skipping sync.")
         return
 
-    log_files = [
-        cfg.logging.trade_log_file,
-        cfg.logging.pnl_log_file,
-        cfg.logging.run_log_file,
-    ]
+    log_dir = cfg.logging.log_dir.rstrip("/")
 
     try:
         _ensure_branch(gh.token, gh.repo, gh.branch)
 
         synced = 0
-        for local_path in log_files:
-            if not os.path.exists(local_path) or os.path.getsize(local_path) == 0:
+        for filename in os.listdir(log_dir):
+            if not filename.endswith((".log", ".json", ".csv")):
                 continue
-            remote_path = local_path  # mirror local path in the repo
+            local_path = os.path.join(log_dir, filename)
+            if not os.path.isfile(local_path) or os.path.getsize(local_path) == 0:
+                continue
+            remote_path = f"{log_dir}/{filename}"
             _push_file(gh.token, gh.repo, gh.branch, remote_path, local_path)
             synced += 1
 
