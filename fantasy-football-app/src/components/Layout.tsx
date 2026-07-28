@@ -26,7 +26,7 @@ function ScoringSwitcher() {
           key={o.v}
           onClick={() => setFormat(o.v)}
           className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
-            format === o.v ? "bg-[var(--series-1)] text-white" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            format === o.v ? "brand-gradient text-white shadow-sm" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
           }`}
         >
           {o.label}
@@ -45,10 +45,7 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6 min-w-0">
             <NavLink to="/" className="flex items-center gap-2 shrink-0 font-bold text-[15px] tracking-tight">
-              <span
-                className="w-7 h-7 rounded-md flex items-center justify-center text-white text-[13px] font-bold"
-                style={{ background: "var(--series-3)" }}
-              >
+              <span className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center text-white text-[13px] font-bold shadow-[0_2px_10px_-2px_color-mix(in_oklab,var(--series-1)_60%,transparent)]">
                 FF
               </span>
               <span className="hidden sm:inline">Gridiron Lab</span>
@@ -112,8 +109,8 @@ export default function Layout() {
 
       <footer className="border-t border-[var(--border)] py-6 px-4 sm:px-6 text-center text-xs text-[var(--text-muted)]">
         Stats from nflverse (public NFL play-by-play data). Historical stats through the {" "}
-        {2025} season; schedule &amp; matchups for the {2026} season. Draft rankings are derived from{" "}
-        {2025} season performance, not a live industry ADP feed.
+        {2025} season; schedule &amp; matchups for the {2026} season. Draft rankings are a Half-PPR Top-300 derived
+        from {2025} season performance, not a live industry ADP feed.
       </footer>
     </div>
   );

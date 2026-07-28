@@ -8,14 +8,15 @@ season data.
 
 - **Players** — search and filter every fantasy-relevant player back to 2010,
   with career stat lines and weekly trend charts (2018+).
-- **Compare** — put up to 4 players side by side with a relative-performance
-  radar chart and a full stat table.
+- **Compare** — put up to 4 players side by side across their entire
+  careers: a career radar profile, career totals, and a season-by-season
+  breakdown with an auto-generated insight for every year.
 - **Schedule Difficulty** — 2026 rest-of-season strength of schedule by
   position, computed from how many fantasy points each defense actually
   allowed in 2025.
-- **Mock Draft** — a 10-team snake draft against CPU opponents, seeded with
-  rankings from real 2025 season production, with a live draft board and a
-  post-draft grade.
+- **Mock Draft** — a 10 or 12-team snake draft against CPU opponents, ranked
+  Half-PPR (0.5 pt/reception) Top-300 from real 2025 season production, with
+  a full live draft board (every pick, every team) and a post-draft grade.
 - **Historical Seasons** — league leaders at every position (including team
   D/ST), season by season from 2010–2025.
 
@@ -30,8 +31,9 @@ schedules and turns them into the static JSON files consumed by the app
 (`public/data/`). Team defense (D/ST) scoring and schedule-difficulty ratings
 are derived from those same box scores using standard fantasy scoring rules.
 
-Mock draft rankings are seeded from final 2025 season fantasy production —
-they are **not** a live industry ADP feed.
+Mock draft rankings are seeded from final 2025 season fantasy production,
+scored Half-PPR — they are **not** a live industry ADP feed or a licensed
+third-party rankings feed (e.g. CBS Sports).
 
 ## Development
 

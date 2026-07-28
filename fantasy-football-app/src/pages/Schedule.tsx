@@ -74,7 +74,7 @@ export default function Schedule() {
         <Loading />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-5">
-          <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden">
+          <section className="card overflow-hidden">
             <div className="px-4 py-3 border-b border-[var(--border)] font-semibold text-[15px]">
               League SOS Ranking — {pos}
             </div>
@@ -106,7 +106,7 @@ export default function Schedule() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5 flex flex-col gap-4">
+          <section className="card p-5 flex flex-col gap-4">
             {activeTeam && teams && (
               <>
                 <div className="flex items-center justify-between flex-wrap gap-2">
