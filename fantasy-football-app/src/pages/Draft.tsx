@@ -96,8 +96,9 @@ export default function Draft() {
       <div className="max-w-lg mx-auto flex flex-col gap-5 py-10 text-center">
         <h1 className="text-2xl font-bold tracking-tight">Mock Draft</h1>
         <p className="text-sm text-[var(--text-secondary)]">
-          Snake draft against {teamCount - 1} CPU teams · {ROUNDS} rounds. Rankings are a Half-PPR (0.5 pt/reception)
-          Top-300, value-based off real 2025 season fantasy production — not a live ADP feed.
+          Snake draft against {teamCount - 1} CPU teams · {ROUNDS} rounds. Rankings are our own 2026 Half-PPR
+          (0.5 pt/reception) projections — built from multi-year trends and aging curves, not just last year's
+          totals — Top-300, value-based. Not a live ADP feed.
         </p>
         <div className="card p-6 flex flex-col gap-5 items-center">
           <div className="flex flex-col gap-2 items-center">
@@ -212,7 +213,8 @@ export default function Draft() {
                 <tr className="text-left text-[var(--text-muted)] text-xs uppercase border-b border-[var(--border)]">
                   <th className="py-2 pl-4 pr-2 w-10">Rk</th>
                   <th className="py-2 px-2">Player</th>
-                  <th className="py-2 px-2 text-right">'25 Half-PPR</th>
+                  <th className="py-2 px-2 text-right">Proj '26</th>
+                  <th className="py-2 px-2 text-right">'25 Actual</th>
                   <th className="py-2 px-2 pr-4 text-right w-20"></th>
                 </tr>
               </thead>
@@ -228,7 +230,8 @@ export default function Draft() {
                         <span className="text-xs text-[var(--text-muted)]">{p.team}</span>
                       </div>
                     </td>
-                    <td className="py-1.5 px-2 text-right tabular">{p.last_season_fpts_half.toFixed(1)}</td>
+                    <td className="py-1.5 px-2 text-right tabular font-semibold">{p.proj_fpts_half.toFixed(1)}</td>
+                    <td className="py-1.5 px-2 text-right tabular text-[var(--text-muted)]">{p.last_season_fpts_half.toFixed(1)}</td>
                     <td className="py-1.5 px-2 pr-4 text-right">
                       <button
                         disabled={!isUserTurn || draftComplete}

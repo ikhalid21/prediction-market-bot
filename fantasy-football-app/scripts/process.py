@@ -408,49 +408,124 @@ with open(os.path.join(OUT, "dst_by_team.json"), "w") as f:
     json.dump(dst_by_team_season, f, separators=(",", ":"))
 print("Wrote dst_by_team.json")
 
-# ---------------- Draft pool / rankings (Half-PPR, based on final LATEST_SEASON performance) ----------------
-# Scored Half-PPR (0.5 pt/reception), capped at a realistic ~300-player pool
-# with K/DST clustered near the bottom rather than sorted in with skill
-# players by raw points (a full season of K/DST scoring is much lower than a
-# top skill player's, but every league still needs them).
+# ---------------- Draft pool / rankings (our own 2026 projections, Half-PPR) ----------------
+# NOT last season's raw totals, and NOT a copy of any licensed rankings or
+# projections feed (CBS, ESPN, Yahoo, FantasyPros, etc — those are each
+# site's proprietary compiled product; scraping and republishing them here
+# would violate their terms). Instead we build our own forward-looking
+# projection from real historical data:
 #
-# Within QB/RB/WR/TE, players are ordered by Value-Based Drafting (VBD) —
-# points above a per-position replacement baseline — not raw points. Raw
-# points alone push QBs (the highest, flattest-scoring position) into the
-# first couple of rounds, which doesn't match real half-PPR single-QB
-# drafts: FantasyPros/RotoWire/Underdog 2026 ADP has round 1 as almost
-# entirely RB/WR (plus at most one clearly elite TE), with the first QB
-# typically coming off the board in the back half of round 2. The baseline
-# ranks below were tuned against real half-PPR data to reproduce that.
-VBD_BASELINE_RANK = {"QB": 7, "RB": 27, "WR": 32, "TE": 15}
+#   1. Per-game half-PPR rate, weighted across a player's last up to 3
+#      seasons (55/30/15), so one outlier year doesn't dominate.
+#   2. An empirical, position-specific aging curve: for every pair of
+#      consecutive seasons in our real 2010-2025 data, measure the
+#      year-over-year change in per-game rate, bucketed by position and
+#      "which season of their career" the earlier year was. The median per
+#      bucket is a real, data-derived aging multiplier (RBs decay fast after
+#      year 3-4, QBs barely decay at all) — this reproduces well-known
+#      positional aging patterns without copying anyone's projections.
+#      Multipliers are shrunk 70% toward 1.0 so small-sample buckets can't
+#      swing a single player wildly.
+#   3. Projected games = weighted average games played, capped at 17.
+#   4. QB/RB/WR/TE are then ranked by Value-Based Drafting (VBD) — points
+#      above a per-position replacement baseline — not raw projected points.
+#      Otherwise QBs (highest, flattest-scoring position) would still
+#      dominate round 1. Baseline ranks were tuned against current ADP
+#      patterns (FantasyPros/RotoWire/Underdog) so round 1 comes out
+#      RB/WR/elite-TE only, first QB in the back half of round 2.
+#
+# Kickers and DST use the same recency-weighted average with no aging curve
+# (not a meaningful concept for a team stat, and the K sample's too thin to
+# fit one reliably), appended after the skill pool like real cheat sheets.
+RECENT_WEIGHTS = [0.55, 0.30, 0.15]
+GROWTH_SHRINK = 0.3
+MAX_EXP_BUCKET = 10
+MIN_GAMES_FOR_GROWTH_SAMPLE = 6
+VBD_BASELINE_RANK = {"QB": 8, "RB": 27, "WR": 32, "TE": 15}
 
-latest = [r for r in season_stats_records if r["season"] == LATEST_SEASON]
-latest_by_id = {r["player_id"]: r for r in latest}
 idx_by_id = {p["id"]: p for p in players_index}
+records_by_id = {}
+for r in season_stats_records:
+    records_by_id.setdefault(r["player_id"], []).append(r)
+
+
+def median(xs):
+    xs = sorted(xs)
+    n = len(xs)
+    return xs[n // 2] if n % 2 else (xs[n // 2 - 1] + xs[n // 2]) / 2
+
+
+growth_samples = {}
+for pid, rows in records_by_id.items():
+    p = idx_by_id.get(pid)
+    if not p or p["position"] not in ("QB", "RB", "WR", "TE"):
+        continue
+    rows_sorted = sorted(rows, key=lambda r: r["season"])
+    for i in range(len(rows_sorted) - 1):
+        s1, s2 = rows_sorted[i], rows_sorted[i + 1]
+        if s2["season"] != s1["season"] + 1:
+            continue
+        if s1["games"] < MIN_GAMES_FOR_GROWTH_SAMPLE or s2["games"] < MIN_GAMES_FOR_GROWTH_SAMPLE:
+            continue
+        rate1 = s1["fpts_half"] / s1["games"]
+        if rate1 <= 0:
+            continue
+        key = (p["position"], min(i + 1, MAX_EXP_BUCKET))
+        growth_samples.setdefault(key, []).append((s2["fpts_half"] / s2["games"]) / rate1)
+
+growth_table = {key: 1 + (median(vals) - 1) * GROWTH_SHRINK for key, vals in growth_samples.items()}
+
+
+def project_player(rows, position):
+    recent = sorted(rows, key=lambda r: -r["season"])[:3]
+    recent = [r for r in recent if r["games"] > 0]
+    if not recent:
+        return None
+    w = RECENT_WEIGHTS[: len(recent)]
+    wsum = sum(w)
+    w = [x / wsum for x in w]
+    weighted_rate = sum((r["fpts_half"] / r["games"]) * wi for r, wi in zip(recent, w))
+    weighted_games = sum(r["games"] * wi for r, wi in zip(recent, w))
+    proj_games = min(17, round(weighted_games))
+    mult = growth_table.get((position, min(len(rows), MAX_EXP_BUCKET)), 1.0) if position in VBD_BASELINE_RANK else 1.0
+    return weighted_rate * mult * proj_games, proj_games
+
 
 skill_pool, kicker_pool, dst_pool = [], [], []
-for pid, r in latest_by_id.items():
+for pid, rows in records_by_id.items():
     p = idx_by_id.get(pid)
-    if not p:
+    if not p or p["last_season"] != LATEST_SEASON:
         continue
+    latest_row = next((r for r in rows if r["season"] == LATEST_SEASON), None)
+    if not latest_row:
+        continue
+    result = project_player(rows, p["position"])
+    if not result:
+        continue
+    proj_fpts, proj_games = result
     entry = {
-        "id": pid, "name": p["name"], "position": p["position"], "team": r["team"],
-        "last_season_fpts_half": r["fpts_half"], "last_season_fpts": r["fpts"],
-        "games": r["games"],
+        "id": pid, "name": p["name"], "position": p["position"], "team": latest_row["team"],
+        "proj_fpts_half": round(proj_fpts, 2), "proj_games": proj_games,
+        "last_season_fpts_half": latest_row["fpts_half"], "games": latest_row["games"],
         "headshot": p["headshot"],
-        "bye_week": bye_weeks.get(r["team"]),
+        "bye_week": bye_weeks.get(latest_row["team"]),
     }
     (kicker_pool if p["position"] == "K" else skill_pool).append(entry)
 
 for team, seasons in dst_by_team_season.items():
-    r = seasons.get(LATEST_SEASON)
-    if not r:
+    recent = [seasons[y] for y in range(LATEST_SEASON, LATEST_SEASON - 3, -1) if y in seasons]
+    if not recent:
         continue
+    w = RECENT_WEIGHTS[: len(recent)]
+    wsum = sum(w)
+    w = [x / wsum for x in w]
+    proj_fpts = sum(r["fpts"] * wi for r, wi in zip(recent, w))
+    latest = recent[0]
     name, conf, div, color = TEAM_INFO[team]
     dst_pool.append({
         "id": f"DST_{team}", "name": f"{name} D/ST", "position": "DST", "team": team,
-        "last_season_fpts_half": r["fpts"], "last_season_fpts": r["fpts"],
-        "games": 17, "headshot": None,
+        "proj_fpts_half": round(proj_fpts, 2), "proj_games": 17,
+        "last_season_fpts_half": latest["fpts"], "games": 17, "headshot": None,
         "bye_week": bye_weeks.get(team),
     })
 
@@ -458,26 +533,26 @@ skill_by_pos = {}
 for p in skill_pool:
     skill_by_pos.setdefault(p["position"], []).append(p)
 for pos, rows in skill_by_pos.items():
-    rows.sort(key=lambda x: -x["last_season_fpts_half"])
+    rows.sort(key=lambda x: -x["proj_fpts_half"])
 
 baseline_pts = {
-    pos: rows[min(VBD_BASELINE_RANK[pos], len(rows)) - 1]["last_season_fpts_half"]
+    pos: rows[min(VBD_BASELINE_RANK[pos], len(rows)) - 1]["proj_fpts_half"]
     for pos, rows in skill_by_pos.items() if pos in VBD_BASELINE_RANK
 }
 for p in skill_pool:
-    p["vbd_value"] = p["last_season_fpts_half"] - baseline_pts.get(p["position"], 0)
+    p["vbd_value"] = p["proj_fpts_half"] - baseline_pts.get(p["position"], 0)
 
 skill_pool.sort(key=lambda x: -x["vbd_value"])
-kicker_pool.sort(key=lambda x: -x["last_season_fpts_half"])
-dst_pool.sort(key=lambda x: -x["last_season_fpts_half"])
+kicker_pool.sort(key=lambda x: -x["proj_fpts_half"])
+dst_pool.sort(key=lambda x: -x["proj_fpts_half"])
 
 SKILL_CAP, K_CAP, DST_CAP = 244, 24, 32
 draft_pool = skill_pool[:SKILL_CAP] + kicker_pool[:K_CAP] + dst_pool[:DST_CAP]
 for p in draft_pool:
     p.pop("vbd_value", None)
 
-# pos_rank_last_season uses raw points, not VBD value — "best RB by production"
-# is a different question from "best pick overall".
+# pos_rank_last_season uses actual last-season points, not the projection —
+# "best RB by production last year" is a different question from "best pick".
 by_pos = {}
 for p in draft_pool:
     by_pos.setdefault(p["position"], []).append(p)
