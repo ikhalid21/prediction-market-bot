@@ -97,7 +97,7 @@ export default function Draft() {
         <h1 className="text-2xl font-bold tracking-tight">Mock Draft</h1>
         <p className="text-sm text-[var(--text-secondary)]">
           Snake draft against {teamCount - 1} CPU teams · {ROUNDS} rounds. Rankings are a Half-PPR (0.5 pt/reception)
-          Top-300, built from real 2025 season fantasy production — not a live ADP feed.
+          Top-300, value-based off real 2025 season fantasy production — not a live ADP feed.
         </p>
         <div className="card p-6 flex flex-col gap-5 items-center">
           <div className="flex flex-col gap-2 items-center">
