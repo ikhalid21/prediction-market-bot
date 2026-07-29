@@ -1,6 +1,8 @@
 import type { DraftPoolPlayer, Position } from "./types";
 
-export const TEAM_COUNT = 10;
+export const TEAM_COUNT_OPTIONS = [10, 12] as const;
+export type TeamCount = (typeof TEAM_COUNT_OPTIONS)[number];
+export const DEFAULT_TEAM_COUNT: TeamCount = 10;
 export const ROSTER_SLOTS: { slot: string; positions: Position[]; count: number }[] = [
   { slot: "QB", positions: ["QB"], count: 1 },
   { slot: "RB", positions: ["RB"], count: 2 },

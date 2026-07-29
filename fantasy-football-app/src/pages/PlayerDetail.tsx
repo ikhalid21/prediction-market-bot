@@ -85,7 +85,7 @@ export default function PlayerDetail() {
         <StatTile label={`${latest.season} Pos. Rank`} value={ordinal(latest.pos_rank)} />
       </div>
 
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5">
+      <section className="card p-5">
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <h2 className="font-semibold text-[15px]">Weekly Trend — {scoringLabel(format)} Points</h2>
           {weeklySeasons.length > 0 && (
@@ -113,7 +113,7 @@ export default function PlayerDetail() {
         )}
       </section>
 
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] overflow-x-auto scrollbar-thin">
+      <section className="card overflow-x-auto scrollbar-thin">
         <div className="p-5 pb-3">
           <h2 className="font-semibold text-[15px]">Season by Season</h2>
         </div>
@@ -178,7 +178,7 @@ export default function PlayerDetail() {
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-4">
+    <div className="card p-4">
       <div className="text-xs text-[var(--text-muted)] mb-1">{label}</div>
       <div className="text-xl font-bold tabular">{value}</div>
     </div>

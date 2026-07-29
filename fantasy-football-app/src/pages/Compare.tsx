@@ -2,18 +2,67 @@ import { useEffect, useMemo, useState } from "react";
 import { getPlayersIndex, getAllSeasonStats } from "../lib/data";
 import type { PlayerIndexEntry, SeasonStatLine } from "../lib/types";
 import { useScoring } from "../lib/ScoringContext";
-import { fptsField, perGame, fmt1, fmt0, scoringLabel, SERIES_ORDER } from "../lib/format";
+import { fptsField, perGame, fmt1, fmt0, scoringLabel, ordinal, SERIES_ORDER } from "../lib/format";
 import PlayerAvatar from "../components/PlayerAvatar";
 import PositionBadge from "../components/PositionBadge";
 import Loading from "../components/Loading";
 import RadarCompareChart from "../components/RadarCompareChart";
 
 const MAX_PLAYERS = 4;
-const SEASON = 2025;
 
 interface Selected {
   player: PlayerIndexEntry;
-  stat: SeasonStatLine;
+  seasons: SeasonStatLine[];
+}
+
+interface Career {
+  games: number;
+  fpts: number;
+  rushYds: number;
+  recYds: number;
+  passYds: number;
+  rec: number;
+  td: number;
+  ppg: number;
+  seasonsPlayed: number;
+  bestSeason: SeasonStatLine;
+}
+
+function careerOf(seasons: SeasonStatLine[], field: "fpts" | "fpts_ppr" | "fpts_half"): Career {
+  const games = seasons.reduce((a, s) => a + s.games, 0);
+  const fpts = seasons.reduce((a, s) => a + s[field], 0);
+  const bestSeason = seasons.reduce((best, s) => (s[field] > best[field] ? s : best), seasons[0]);
+  return {
+    games,
+    fpts,
+    rushYds: seasons.reduce((a, s) => a + s.rush_yds, 0),
+    recYds: seasons.reduce((a, s) => a + s.rec_yds, 0),
+    passYds: seasons.reduce((a, s) => a + s.pass_yds, 0),
+    rec: seasons.reduce((a, s) => a + s.rec, 0),
+    td: seasons.reduce((a, s) => a + s.rush_td + s.rec_td + s.pass_td, 0),
+    ppg: perGame(fpts, games),
+    seasonsPlayed: seasons.length,
+    bestSeason,
+  };
+}
+
+function seasonInsight(s: SeasonStatLine, seasons: SeasonStatLine[], field: "fpts" | "fpts_ppr" | "fpts_half", position: string): string {
+  const idx = seasons.findIndex((x) => x.season === s.season);
+  const ppg = perGame(s[field], s.games);
+  const totalGames = seasons.reduce((a, x) => a + x.games, 0);
+  const totalFpts = seasons.reduce((a, x) => a + x[field], 0);
+  const careerPpg = perGame(totalFpts, totalGames);
+  const isBest = s[field] === Math.max(...seasons.map((x) => x[field]));
+  const isDebut = idx === 0 && seasons.length > 1;
+  const parts: string[] = [];
+  if (isDebut) parts.push("Debut season");
+  if (isBest) parts.push("career-best fantasy output");
+  else if (careerPpg > 0 && ppg >= careerPpg * 1.15) parts.push("well above career average");
+  else if (careerPpg > 0 && ppg <= careerPpg * 0.7 && s.games >= 6) parts.push("down year vs. career average");
+  if (s.games <= 10) parts.push(`limited to ${s.games} games`);
+  if (s.pos_rank <= 12) parts.push(`finished ${position}${s.pos_rank} overall`);
+  if (parts.length === 0) parts.push("in line with career norms");
+  return parts.join(" — ");
 }
 
 export default function Compare() {
@@ -34,8 +83,8 @@ export default function Compare() {
     return selectedIds
       .map((id) => {
         const player = byId.get(id);
-        const stat = seasonStats[id]?.find((s) => s.season === SEASON) ?? seasonStats[id]?.[seasonStats[id].length - 1];
-        return player && stat ? { player, stat } : null;
+        const seasons = seasonStats[id];
+        return player && seasons?.length ? { player, seasons } : null;
       })
       .filter((x): x is Selected => !!x);
   }, [selectedIds, index, seasonStats]);
@@ -51,26 +100,27 @@ export default function Compare() {
 
   const field = fptsField(format);
 
+  const careers = useMemo(() => selected.map((s) => ({ s, career: careerOf(s.seasons, field) })), [selected, field]);
+
   const radarData = useMemo(() => {
-    if (selected.length === 0) return [];
-    const metrics: { key: string; label: string; get: (s: Selected) => number }[] = [
-      { key: "fpts", label: "Fantasy Pts", get: (s) => s.stat[field] },
-      { key: "ppg", label: "Pts / Game", get: (s) => perGame(s.stat[field], s.stat.games) },
-      { key: "yds", label: "Total Yards", get: (s) => s.stat.rush_yds + s.stat.rec_yds + s.stat.pass_yds },
-      { key: "td", label: "Total TD", get: (s) => s.stat.rush_td + s.stat.rec_td + s.stat.pass_td },
-      { key: "vol", label: "Touches/Targets", get: (s) => s.stat.rush_att + s.stat.tgt },
+    if (careers.length === 0) return [];
+    const metrics: { key: string; label: string; get: (c: Career) => number }[] = [
+      { key: "fpts", label: "Career Pts", get: (c) => c.fpts },
+      { key: "ppg", label: "Pts / Game", get: (c) => c.ppg },
+      { key: "yds", label: "Career Yards", get: (c) => c.rushYds + c.recYds + c.passYds },
+      { key: "td", label: "Career TD", get: (c) => c.td },
+      { key: "seasons", label: "Seasons Played", get: (c) => c.seasonsPlayed },
     ];
-    return metrics
-      .map((m) => {
-        const values = selected.map((s) => m.get(s));
-        const max = Math.max(...values, 1);
-        const row: Record<string, unknown> = { metric: m.label };
-        selected.forEach((s) => {
-          row[s.player.id] = Math.round((m.get(s) / max) * 100);
-        });
-        return row;
+    return metrics.map((m) => {
+      const values = careers.map(({ career }) => m.get(career));
+      const max = Math.max(...values, 1);
+      const row: Record<string, unknown> = { metric: m.label };
+      careers.forEach(({ s, career }) => {
+        row[s.player.id] = Math.round((m.get(career) / max) * 100);
       });
-  }, [selected, field]);
+      return row;
+    });
+  }, [careers]);
 
   function addPlayer(id: string) {
     if (selectedIds.length >= MAX_PLAYERS) return;
@@ -86,7 +136,7 @@ export default function Compare() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Compare Players</h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
-          Add up to {MAX_PLAYERS} players to compare their {SEASON} season head to head.
+          Add up to {MAX_PLAYERS} players to compare their entire careers, season by season.
         </p>
       </div>
 
@@ -145,16 +195,40 @@ export default function Compare() {
             </div>
           ) : (
             <>
-              <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5">
-                <h2 className="font-semibold text-[15px] mb-1">Relative Performance ({SEASON})</h2>
-                <p className="text-xs text-[var(--text-muted)] mb-2">Each axis scaled to the group's max — 100 = best in group.</p>
+              <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {careers.map(({ s, career }, i) => (
+                  <div key={s.player.id} className="card p-4 flex flex-col gap-2" style={{ borderColor: SERIES_ORDER[i % SERIES_ORDER.length] }}>
+                    <div className="flex items-center gap-2">
+                      <PlayerAvatar src={s.player.headshot} name={s.player.name} position={s.player.position} size={28} />
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold truncate">{s.player.name}</div>
+                        <div className="text-[11px] text-[var(--text-muted)]">
+                          {career.seasonsPlayed} season{career.seasonsPlayed > 1 ? "s" : ""} · {s.seasons[0].season}–{s.seasons[s.seasons.length - 1].season}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mt-1">
+                      <MiniStat label={`Career ${scoringLabel(format)}`} value={fmt0(career.fpts)} />
+                      <MiniStat label="Career Pts/G" value={fmt1(career.ppg)} />
+                      <MiniStat label="Best Season" value={`${career.bestSeason.season} · ${fmt1(career.bestSeason[field])}`} span />
+                    </div>
+                  </div>
+                ))}
+              </section>
+
+              <section className="card p-5">
+                <h2 className="font-semibold text-[15px] mb-1">Career Profile</h2>
+                <p className="text-xs text-[var(--text-muted)] mb-2">Each axis scaled to the group's max — 100 = best in group, across full careers.</p>
                 <RadarCompareChart
                   data={radarData}
                   entities={selected.map((s) => ({ key: s.player.id, label: s.player.name }))}
                 />
               </section>
 
-              <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] overflow-x-auto scrollbar-thin">
+              <section className="card overflow-x-auto scrollbar-thin">
+                <div className="p-4 pb-0">
+                  <h2 className="font-semibold text-[15px]">Career Totals</h2>
+                </div>
                 <table className="w-full text-sm min-w-[560px]">
                   <thead>
                     <tr className="text-left text-[var(--text-muted)] text-xs uppercase tracking-wide border-b border-[var(--border)]">
@@ -167,21 +241,64 @@ export default function Compare() {
                     </tr>
                   </thead>
                   <tbody>
-                    <CompareRow label="Team" values={selected.map((s) => s.stat.team)} />
-                    <CompareRow label="Games" values={selected.map((s) => String(s.stat.games))} />
-                    <CompareRow label="Rush Yds" values={selected.map((s) => fmt0(s.stat.rush_yds))} />
-                    <CompareRow label="Rec / Rec Yds" values={selected.map((s) => `${s.stat.rec} / ${fmt0(s.stat.rec_yds)}`)} />
-                    <CompareRow label="Pass Yds" values={selected.map((s) => fmt0(s.stat.pass_yds))} />
-                    <CompareRow label="Total TD" values={selected.map((s) => String(s.stat.rush_td + s.stat.rec_td + s.stat.pass_td))} />
+                    <CompareRow label="Seasons" values={careers.map(({ career }) => String(career.seasonsPlayed))} />
+                    <CompareRow label="Games" values={careers.map(({ career }) => String(career.games))} />
+                    <CompareRow label="Rush Yds" values={careers.map(({ career }) => fmt0(career.rushYds))} />
+                    <CompareRow label="Rec / Rec Yds" values={careers.map(({ career }) => `${career.rec} / ${fmt0(career.recYds)}`)} />
+                    <CompareRow label="Pass Yds" values={careers.map(({ career }) => fmt0(career.passYds))} />
+                    <CompareRow label="Total TD" values={careers.map(({ career }) => String(career.td))} />
+                    <CompareRow label={`Career ${scoringLabel(format)} Pts`} values={careers.map(({ career }) => fmt0(career.fpts))} highlight />
+                    <CompareRow label="Career Pts / Game" values={careers.map(({ career }) => fmt1(career.ppg))} highlight />
                     <CompareRow
-                      label={`${scoringLabel(format)} Pts`}
-                      values={selected.map((s) => fmt1(s.stat[field]))}
-                      highlight
+                      label="Best Season"
+                      values={careers.map(({ career }) => `${career.bestSeason.season} (${fmt1(career.bestSeason[field])} pts)`)}
                     />
-                    <CompareRow label="Pts / Game" values={selected.map((s) => fmt1(perGame(s.stat[field], s.stat.games)))} highlight />
-                    <CompareRow label={`${SEASON} Position Rank`} values={selected.map((s) => `#${s.stat.pos_rank}`)} />
                   </tbody>
                 </table>
+              </section>
+
+              <section className="flex flex-col gap-4">
+                <h2 className="font-semibold text-[15px]">Season by Season</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {selected.map((s, i) => (
+                    <div key={s.player.id} className="card overflow-hidden">
+                      <div
+                        className="p-3 border-b border-[var(--border)] flex items-center gap-2"
+                        style={{ borderTop: `3px solid ${SERIES_ORDER[i % SERIES_ORDER.length]}` }}
+                      >
+                        <PlayerAvatar src={s.player.headshot} name={s.player.name} position={s.player.position} size={22} />
+                        <span className="font-semibold text-sm">{s.player.name}</span>
+                        <PositionBadge position={s.player.position} />
+                      </div>
+                      <div className="max-h-[340px] overflow-y-auto scrollbar-thin">
+                        <table className="w-full text-xs">
+                          <thead className="sticky top-0 bg-[var(--surface-1)]">
+                            <tr className="text-left text-[var(--text-muted)] uppercase tracking-wide border-b border-[var(--border)]">
+                              <th className="py-2 pl-4 pr-2">Yr</th>
+                              <th className="py-2 px-2 text-right">GP</th>
+                              <th className="py-2 px-2 text-right">{scoringLabel(format)}</th>
+                              <th className="py-2 px-2 text-right">Rk</th>
+                              <th className="py-2 px-2 pr-4">Insight</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[...s.seasons].reverse().map((season) => (
+                              <tr key={season.season} className="border-b border-[var(--border)] last:border-0">
+                                <td className="py-1.5 pl-4 pr-2 font-medium tabular">{season.season}</td>
+                                <td className="py-1.5 px-2 text-right tabular">{season.games}</td>
+                                <td className="py-1.5 px-2 text-right tabular font-semibold">{fmt1(season[field])}</td>
+                                <td className="py-1.5 px-2 text-right tabular">{ordinal(season.pos_rank)}</td>
+                                <td className="py-1.5 px-2 pr-4 text-[var(--text-secondary)] leading-snug">
+                                  {seasonInsight(season, s.seasons, field, s.player.position)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </section>
             </>
           )}
@@ -201,5 +318,14 @@ function CompareRow({ label, values, highlight }: { label: string; values: strin
         </td>
       ))}
     </tr>
+  );
+}
+
+function MiniStat({ label, value, span }: { label: string; value: string; span?: boolean }) {
+  return (
+    <div className={span ? "col-span-2" : ""}>
+      <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide">{label}</div>
+      <div className="text-sm font-semibold tabular truncate">{value}</div>
+    </div>
   );
 }

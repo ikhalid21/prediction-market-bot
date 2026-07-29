@@ -115,7 +115,7 @@ export interface DraftPoolPlayer {
   name: string;
   position: Position;
   team: string;
-  last_season_fpts_ppr: number;
+  last_season_fpts_half: number;
   last_season_fpts: number;
   pos_rank_last_season: number;
   games: number;

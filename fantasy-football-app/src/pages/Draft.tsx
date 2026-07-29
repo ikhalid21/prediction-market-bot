@@ -1,18 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getDraftPool } from "../lib/data";
 import type { DraftPoolPlayer, Position } from "../lib/types";
-import { TEAM_COUNT, ROUNDS, ROSTER_SLOTS, buildSnakeOrder, cpuSelect, gradeGrade, type DraftPick } from "../lib/draft";
+import {
+  ROUNDS,
+  ROSTER_SLOTS,
+  TEAM_COUNT_OPTIONS,
+  DEFAULT_TEAM_COUNT,
+  type TeamCount,
+  buildSnakeOrder,
+  cpuSelect,
+  gradeGrade,
+  type DraftPick,
+} from "../lib/draft";
 import PlayerAvatar from "../components/PlayerAvatar";
 import PositionBadge from "../components/PositionBadge";
+import TeamTag from "../components/TeamTag";
 import Loading from "../components/Loading";
 
-const ORDER = buildSnakeOrder(TEAM_COUNT, ROUNDS);
-const TOTAL_PICKS = ORDER.length;
 const POS_FILTERS: (Position | "ALL")[] = ["ALL", "QB", "RB", "WR", "TE", "K", "DST"];
 
 export default function Draft() {
   const [pool, setPool] = useState<DraftPoolPlayer[] | null>(null);
   const [started, setStarted] = useState(false);
+  const [teamCount, setTeamCount] = useState<TeamCount>(DEFAULT_TEAM_COUNT);
   const [userSlot, setUserSlot] = useState(4);
   const [picks, setPicks] = useState<DraftPick[]>([]);
   const [posFilter, setPosFilter] = useState<Position | "ALL">("ALL");
@@ -23,6 +33,9 @@ export default function Draft() {
     getDraftPool().then(setPool);
   }, []);
 
+  const order = useMemo(() => buildSnakeOrder(teamCount, ROUNDS), [teamCount]);
+  const totalPicks = order.length;
+
   const draftedIds = useMemo(() => new Set(picks.map((p) => p.player.id)), [picks]);
   const available = useMemo(() => {
     if (!pool) return [];
@@ -30,10 +43,10 @@ export default function Draft() {
   }, [pool, draftedIds]);
 
   const currentPickNumber = picks.length;
-  const draftComplete = currentPickNumber >= TOTAL_PICKS;
-  const currentTeam = draftComplete ? null : ORDER[currentPickNumber];
+  const draftComplete = currentPickNumber >= totalPicks;
+  const currentTeam = draftComplete ? null : order[currentPickNumber];
   const isUserTurn = currentTeam === userSlot;
-  const currentRound = Math.floor(currentPickNumber / TEAM_COUNT) + 1;
+  const currentRound = Math.floor(currentPickNumber / teamCount) + 1;
 
   const myPicks = useMemo(() => picks.filter((p) => p.teamIndex === userSlot).map((p) => p.player), [picks, userSlot]);
 
@@ -61,6 +74,11 @@ export default function Draft() {
     setPicks([]);
   }
 
+  function changeTeamCount(n: TeamCount) {
+    setTeamCount(n);
+    if (userSlot >= n) setUserSlot(0);
+  }
+
   const filteredAvailable = useMemo(() => {
     let rows = available;
     if (posFilter !== "ALL") rows = rows.filter((p) => p.position === posFilter);
@@ -78,30 +96,47 @@ export default function Draft() {
       <div className="max-w-lg mx-auto flex flex-col gap-5 py-10 text-center">
         <h1 className="text-2xl font-bold tracking-tight">Mock Draft</h1>
         <p className="text-sm text-[var(--text-secondary)]">
-          Snake draft against {TEAM_COUNT - 1} CPU teams · {ROUNDS} rounds. Rankings are seeded from real 2025
-          season fantasy production (not a live ADP feed).
+          Snake draft against {teamCount - 1} CPU teams · {ROUNDS} rounds. Rankings are a Half-PPR (0.5 pt/reception)
+          Top-300, built from real 2025 season fantasy production — not a live ADP feed.
         </p>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-6 flex flex-col gap-4 items-center">
-          <label className="text-sm font-medium">Your draft slot</label>
-          <div className="flex flex-wrap gap-2 justify-center">
-            {Array.from({ length: TEAM_COUNT }, (_, i) => i).map((i) => (
-              <button
-                key={i}
-                onClick={() => setUserSlot(i)}
-                className={`w-9 h-9 rounded-lg text-sm font-semibold border ${
-                  userSlot === i
-                    ? "bg-[var(--series-1)] text-white border-[var(--series-1)]"
-                    : "border-[var(--border)] hover:bg-[var(--surface-3)]"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+        <div className="card p-6 flex flex-col gap-5 items-center">
+          <div className="flex flex-col gap-2 items-center">
+            <label className="text-sm font-medium">League size</label>
+            <div className="flex rounded-lg border border-[var(--border)] p-0.5">
+              {TEAM_COUNT_OPTIONS.map((n) => (
+                <button
+                  key={n}
+                  onClick={() => changeTeamCount(n)}
+                  className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
+                    teamCount === n ? "brand-gradient text-white" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  }`}
+                >
+                  {n} teams
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2 items-center">
+            <label className="text-sm font-medium">Your draft slot</label>
+            <div className="flex flex-wrap gap-2 justify-center max-w-xs">
+              {Array.from({ length: teamCount }, (_, i) => i).map((i) => (
+                <button
+                  key={i}
+                  onClick={() => setUserSlot(i)}
+                  className={`w-9 h-9 rounded-lg text-sm font-semibold border transition-colors ${
+                    userSlot === i
+                      ? "brand-gradient text-white border-transparent"
+                      : "border-[var(--border)] hover:bg-[var(--surface-3)]"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
           </div>
           <button
             onClick={() => setStarted(true)}
-            className="mt-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white"
-            style={{ background: "var(--series-1)" }}
+            className="mt-1 px-6 py-2.5 rounded-lg text-sm font-semibold text-white brand-gradient shadow-[0_4px_16px_-4px_color-mix(in_oklab,var(--series-1)_55%,transparent)]"
           >
             Start Draft
           </button>
@@ -116,7 +151,7 @@ export default function Draft() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Mock Draft</h1>
           <p className="text-sm text-[var(--text-secondary)]">
-            You are Team {userSlot + 1} of {TEAM_COUNT}
+            You are Team {userSlot + 1} of {teamCount}
           </p>
         </div>
         <button onClick={reset} className="text-sm font-medium px-3 py-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--surface-3)]">
@@ -131,7 +166,7 @@ export default function Draft() {
           }`}
         >
           <span className="font-semibold text-sm">
-            Round {currentRound} · Pick {currentPickNumber + 1} of {TOTAL_PICKS}
+            Round {currentRound} · Pick {currentPickNumber + 1} of {totalPicks}
           </span>
           <span className="text-sm">
             {isUserTurn ? (
@@ -148,7 +183,7 @@ export default function Draft() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
-        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] overflow-hidden">
+        <section className="card overflow-hidden">
           <div className="p-4 border-b border-[var(--border)] flex flex-wrap gap-2 items-center">
             <h2 className="font-semibold text-[15px] mr-auto">Available Players</h2>
             <input
@@ -175,9 +210,9 @@ export default function Draft() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-[var(--surface-1)]">
                 <tr className="text-left text-[var(--text-muted)] text-xs uppercase border-b border-[var(--border)]">
-                  <th className="py-2 pl-4 pr-2 w-10">ADP</th>
+                  <th className="py-2 pl-4 pr-2 w-10">Rk</th>
                   <th className="py-2 px-2">Player</th>
-                  <th className="py-2 px-2 text-right">'25 Pts</th>
+                  <th className="py-2 px-2 text-right">'25 Half-PPR</th>
                   <th className="py-2 px-2 pr-4 text-right w-20"></th>
                 </tr>
               </thead>
@@ -193,13 +228,12 @@ export default function Draft() {
                         <span className="text-xs text-[var(--text-muted)]">{p.team}</span>
                       </div>
                     </td>
-                    <td className="py-1.5 px-2 text-right tabular">{p.last_season_fpts_ppr.toFixed(1)}</td>
+                    <td className="py-1.5 px-2 text-right tabular">{p.last_season_fpts_half.toFixed(1)}</td>
                     <td className="py-1.5 px-2 pr-4 text-right">
                       <button
                         disabled={!isUserTurn || draftComplete}
                         onClick={() => draftPlayer(p)}
-                        className="px-2.5 py-1 rounded-md text-xs font-semibold text-white disabled:opacity-30 disabled:cursor-not-allowed"
-                        style={{ background: "var(--series-1)" }}
+                        className="px-2.5 py-1 rounded-md text-xs font-semibold text-white disabled:opacity-30 disabled:cursor-not-allowed brand-gradient"
                       >
                         Draft
                       </button>
@@ -214,7 +248,7 @@ export default function Draft() {
         <MyRoster picks={myPicks} />
       </div>
 
-      <DraftBoard picks={picks} order={ORDER} userSlot={userSlot} />
+      <DraftBoard picks={picks} order={order} teamCount={teamCount} userSlot={userSlot} currentPickNumber={currentPickNumber} />
     </div>
   );
 }
@@ -234,7 +268,7 @@ function MyRoster({ picks }: { picks: DraftPoolPlayer[] }) {
     }
   }
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-4 h-fit">
+    <section className="card p-4 h-fit">
       <h2 className="font-semibold text-[15px] mb-3">My Roster</h2>
       <div className="flex flex-col gap-1">
         {assigned.map((a, i) => (
@@ -296,45 +330,91 @@ function DraftResults({ picks, userSlot }: { picks: DraftPick[]; userSlot: numbe
   );
 }
 
-function DraftBoard({ picks, order, userSlot }: { picks: DraftPick[]; order: number[]; userSlot: number }) {
-  const rounds = Math.ceil(order.length / TEAM_COUNT);
+function DraftBoard({
+  picks,
+  order,
+  teamCount,
+  userSlot,
+  currentPickNumber,
+}: {
+  picks: DraftPick[];
+  order: number[];
+  teamCount: number;
+  userSlot: number;
+  currentPickNumber: number;
+}) {
+  const rounds = Math.ceil(order.length / teamCount);
+  const currentRound = Math.floor(currentPickNumber / teamCount) + 1;
+  const currentTeam = currentPickNumber < order.length ? order[currentPickNumber] : null;
   return (
-    <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] overflow-x-auto scrollbar-thin">
-      <div className="p-4 border-b border-[var(--border)] font-semibold text-[15px]">Draft Board</div>
-      <table className="text-xs min-w-[900px]">
-        <thead>
-          <tr>
-            <th className="py-2 px-2 sticky left-0 bg-[var(--surface-1)]">Rd</th>
-            {Array.from({ length: TEAM_COUNT }, (_, i) => (
-              <th key={i} className={`py-2 px-2 font-semibold ${i === userSlot ? "text-[var(--series-1)]" : "text-[var(--text-muted)]"}`}>
-                Team {i + 1}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({ length: rounds }, (_, r) => (
-            <tr key={r} className="border-t border-[var(--border)]">
-              <td className="py-1.5 px-2 sticky left-0 bg-[var(--surface-1)] font-semibold tabular">{r + 1}</td>
-              {Array.from({ length: TEAM_COUNT }, (_, t) => {
-                const pick = picks.find((p) => p.round === r + 1 && p.teamIndex === t);
-                return (
-                  <td key={t} className={`py-1.5 px-2 ${t === userSlot ? "bg-[color-mix(in_oklab,var(--series-1)_8%,transparent)]" : ""}`}>
-                    {pick ? (
-                      <div className="flex items-center gap-1">
-                        <PositionBadge position={pick.player.position} />
-                        <span className="truncate max-w-[90px]">{pick.player.name}</span>
-                      </div>
-                    ) : (
-                      <span className="text-[var(--text-muted)]">—</span>
-                    )}
-                  </td>
-                );
-              })}
+    <section className="card overflow-hidden">
+      <div className="p-4 border-b border-[var(--border)] flex items-center justify-between flex-wrap gap-2">
+        <h2 className="font-semibold text-[15px]">Draft Board</h2>
+        <span className="text-xs text-[var(--text-muted)]">Every pick, every team — updates live as the draft goes.</span>
+      </div>
+      <div className="overflow-x-auto scrollbar-thin">
+        <table className="text-xs min-w-[1100px] w-full border-collapse">
+          <thead>
+            <tr>
+              <th className="py-2.5 px-2 sticky left-0 z-10 bg-[var(--surface-1)] w-10">Rd</th>
+              {Array.from({ length: teamCount }, (_, i) => (
+                <th
+                  key={i}
+                  className={`py-2.5 px-2 font-semibold border-l border-[var(--border)] ${
+                    i === userSlot ? "text-[var(--series-1)]" : "text-[var(--text-muted)]"
+                  }`}
+                >
+                  Team {i + 1}
+                  {i === userSlot && <span className="ml-1 text-[9px] font-bold uppercase tracking-wide">(You)</span>}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {Array.from({ length: rounds }, (_, r) => (
+              <tr key={r} className="border-t border-[var(--border)]">
+                <td className="py-2 px-2 sticky left-0 z-10 bg-[var(--surface-1)] font-bold tabular text-[var(--text-secondary)]">{r + 1}</td>
+                {Array.from({ length: teamCount }, (_, t) => {
+                  const pickIndexInRound = r % 2 === 0 ? t : teamCount - 1 - t;
+                  const overall = r * teamCount + pickIndexInRound + 1;
+                  const pick = picks.find((p) => p.round === r + 1 && p.teamIndex === t);
+                  const isOnClock = currentTeam === t && currentRound === r + 1;
+                  return (
+                    <td
+                      key={t}
+                      className={`p-1.5 border-l border-[var(--border)] align-top ${
+                        t === userSlot ? "bg-[color-mix(in_oklab,var(--series-1)_7%,transparent)]" : ""
+                      } ${isOnClock ? "bg-[color-mix(in_oklab,var(--series-4)_18%,transparent)] ring-1 ring-inset ring-[var(--series-4)]" : ""}`}
+                    >
+                      {pick ? (
+                        <div className="flex items-center gap-1.5 min-w-[110px]">
+                          <PlayerAvatar src={pick.player.headshot} name={pick.player.name} position={pick.player.position} size={22} />
+                          <div className="min-w-0 flex flex-col leading-tight">
+                            <span className="flex items-center gap-1">
+                              <span className="text-[9px] text-[var(--text-muted)] tabular">#{overall}</span>
+                              <span className="truncate max-w-[86px] font-medium">{pick.player.name}</span>
+                            </span>
+                            <span className="flex items-center gap-1 text-[10px] text-[var(--text-muted)]">
+                              <PositionBadge position={pick.player.position} />
+                              <TeamTag team={pick.player.team} />
+                            </span>
+                          </div>
+                        </div>
+                      ) : isOnClock ? (
+                        <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: "var(--series-4)" }}>
+                          On the clock
+                        </span>
+                      ) : (
+                        <span className="text-[var(--text-muted)] px-1">—</span>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }

@@ -408,38 +408,56 @@ with open(os.path.join(OUT, "dst_by_team.json"), "w") as f:
     json.dump(dst_by_team_season, f, separators=(",", ":"))
 print("Wrote dst_by_team.json")
 
-# ---------------- Draft pool / rankings (based on final LATEST_SEASON performance) ----------------
+# ---------------- Draft pool / rankings (Half-PPR, based on final LATEST_SEASON performance) ----------------
+# Ranked Half-PPR (0.5 pt/reception) like most published cheat sheets, capped at a
+# realistic ~300-player pool with K/DST clustered near the bottom rather than
+# sorted in with skill players by raw points (a full season of K/DST scoring
+# is much lower than a top skill player's, but every league still needs them).
 latest = [r for r in season_stats_records if r["season"] == LATEST_SEASON]
 latest_by_id = {r["player_id"]: r for r in latest}
 idx_by_id = {p["id"]: p for p in players_index}
 
-draft_pool = []
+skill_pool, kicker_pool, dst_pool = [], [], []
 for pid, r in latest_by_id.items():
     p = idx_by_id.get(pid)
     if not p:
         continue
-    draft_pool.append({
+    entry = {
         "id": pid, "name": p["name"], "position": p["position"], "team": r["team"],
-        "last_season_fpts_ppr": r["fpts_ppr"], "last_season_fpts": r["fpts"],
-        "pos_rank_last_season": r["pos_rank"],
+        "last_season_fpts_half": r["fpts_half"], "last_season_fpts": r["fpts"],
         "games": r["games"],
         "headshot": p["headshot"],
         "bye_week": bye_weeks.get(r["team"]),
-    })
+    }
+    (kicker_pool if p["position"] == "K" else skill_pool).append(entry)
 
 for team, seasons in dst_by_team_season.items():
     r = seasons.get(LATEST_SEASON)
     if not r:
         continue
     name, conf, div, color = TEAM_INFO[team]
-    draft_pool.append({
+    dst_pool.append({
         "id": f"DST_{team}", "name": f"{name} D/ST", "position": "DST", "team": team,
-        "last_season_fpts_ppr": r["fpts"], "last_season_fpts": r["fpts"],
-        "pos_rank_last_season": r["pos_rank"], "games": 17, "headshot": None,
+        "last_season_fpts_half": r["fpts"], "last_season_fpts": r["fpts"],
+        "games": 17, "headshot": None,
         "bye_week": bye_weeks.get(team),
     })
 
-draft_pool.sort(key=lambda x: -x["last_season_fpts_ppr"])
+skill_pool.sort(key=lambda x: -x["last_season_fpts_half"])
+kicker_pool.sort(key=lambda x: -x["last_season_fpts_half"])
+dst_pool.sort(key=lambda x: -x["last_season_fpts_half"])
+
+SKILL_CAP, K_CAP, DST_CAP = 244, 24, 32
+draft_pool = skill_pool[:SKILL_CAP] + kicker_pool[:K_CAP] + dst_pool[:DST_CAP]
+
+by_pos = {}
+for p in draft_pool:
+    by_pos.setdefault(p["position"], []).append(p)
+for pos, rows in by_pos.items():
+    rows.sort(key=lambda x: -x["last_season_fpts_half"])
+    for i, r in enumerate(rows, start=1):
+        r["pos_rank_last_season"] = i
+
 for i, p in enumerate(draft_pool, start=1):
     p["adp_rank"] = i
 

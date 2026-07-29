@@ -77,7 +77,7 @@ export default function Historical() {
       {!allLeaders ? (
         <Loading />
       ) : (
-        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] overflow-x-auto scrollbar-thin">
+        <section className="card overflow-x-auto scrollbar-thin">
           <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="text-left text-[var(--text-muted)] text-xs uppercase tracking-wide border-b border-[var(--border)]">

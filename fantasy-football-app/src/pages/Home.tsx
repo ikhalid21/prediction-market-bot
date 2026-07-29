@@ -31,7 +31,7 @@ const FEATURES = [
   {
     to: "/draft",
     title: "Mock Draft",
-    desc: "Run a snake draft against 9 CPU teams using rankings from actual 2025 season production.",
+    desc: "Run a 10 or 12-team snake draft against CPU teams with a full live draft board, using Half-PPR rankings from actual 2025 season production.",
     color: "var(--series-4)",
   },
   {
@@ -67,8 +67,7 @@ export default function Home() {
         <div className="flex gap-3 flex-wrap justify-center pt-1">
           <Link
             to="/draft"
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-white shadow-sm"
-            style={{ background: "var(--series-1)" }}
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-white brand-gradient shadow-[0_4px_16px_-4px_color-mix(in_oklab,var(--series-1)_55%,transparent)]"
           >
             Start a Mock Draft
           </Link>
@@ -86,7 +85,7 @@ export default function Home() {
           <Link
             key={f.to}
             to={f.to}
-            className="group rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5 flex flex-col gap-2 hover:border-[var(--border-strong)] transition-colors"
+            className="group card p-5 flex flex-col gap-2 hover:border-[var(--border-strong)] transition-colors"
           >
             <span className="w-9 h-9 rounded-lg" style={{ background: `color-mix(in oklab, ${f.color} 18%, transparent)` }} />
             <h3 className="font-semibold text-[15px] text-[var(--text-primary)]">{f.title}</h3>
@@ -98,7 +97,7 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface-1)] p-5">
+      <section className="card p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-semibold text-[15px]">{LATEST_SEASON} Season — Top 10 Overall (PPR)</h2>
           <Link to="/historical" className="text-xs font-medium text-[var(--series-1)]">
