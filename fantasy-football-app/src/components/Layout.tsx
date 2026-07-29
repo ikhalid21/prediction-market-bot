@@ -109,8 +109,8 @@ export default function Layout() {
 
       <footer className="border-t border-[var(--border)] py-6 px-4 sm:px-6 text-center text-xs text-[var(--text-muted)]">
         Stats from nflverse (public NFL play-by-play data). Historical stats through the {" "}
-        {2025} season; schedule &amp; matchups for the {2026} season. Draft rankings are a Half-PPR Top-300 derived
-        from {2025} season performance, not a live industry ADP feed.
+        {2025} season; schedule &amp; matchups for the {2026} season. Draft rankings are our own Half-PPR Top-300
+        projections for {2026}, built from multi-year trends and aging curves — not a live industry ADP feed.
       </footer>
     </div>
   );
