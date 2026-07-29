@@ -33,7 +33,11 @@ are derived from those same box scores using standard fantasy scoring rules.
 
 Mock draft rankings are seeded from final 2025 season fantasy production,
 scored Half-PPR — they are **not** a live industry ADP feed or a licensed
-third-party rankings feed (e.g. CBS Sports).
+third-party rankings feed (e.g. CBS Sports). Within QB/RB/WR/TE, players are
+ordered by Value-Based Drafting (points above a per-position replacement
+baseline), not raw points — this is why elite QBs, who out-score everyone on
+raw points but are easy to replace off the waiver wire, don't go in round 1,
+matching how real half-PPR single-QB drafts actually play out.
 
 ## Development
 

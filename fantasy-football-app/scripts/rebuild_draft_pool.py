@@ -1,13 +1,22 @@
 # Rebuilds public/data/draft_pool.json from the already-generated static JSON
 # (season_stats_by_player.json, players_index.json, dst_by_team.json,
-# schedule_2026.json) using Half-PPR (0.5 pt/reception) scoring, capped at a
-# realistic 300-player pool with K/DST clustered near the bottom the way most
-# published cheat sheets rank them, instead of by raw season point totals.
+# schedule_2026.json) using Half-PPR (0.5 pt/reception) scoring.
+#
+# Skill positions (QB/RB/WR/TE) are ordered by Value-Based Drafting (VBD) —
+# points above a per-position replacement baseline — not raw points. Raw
+# points alone push QBs (who have the highest, flattest scoring curve) into
+# the first couple of rounds, which doesn't match how actual half-PPR
+# single-QB drafts play out: FantasyPros/RotoWire/Underdog 2026 ADP data has
+# round 1 as almost entirely RB/WR (plus at most one clearly elite TE), with
+# the first QB typically coming off the board in the back half of round 2.
+# The baseline ranks below (QB7 / RB27 / WR32 / TE15) were tuned against our
+# real 2025 half-PPR data so the resulting order reproduces that pattern.
 import json
 import os
 
 DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public", "data")
 LATEST_SEASON = 2025
+VBD_BASELINE_RANK = {"QB": 7, "RB": 27, "WR": 32, "TE": 15}
 
 TEAM_NAMES = {t["abbr"]: t["name"] for t in json.load(open(os.path.join(DATA, "teams.json")))}
 players_index = {p["id"]: p for p in json.load(open(os.path.join(DATA, "players_index.json")))}
@@ -42,14 +51,31 @@ for team, seasons in dst_by_team.items():
         "games": 17, "headshot": None, "bye_week": bye_weeks.get(team),
     })
 
-skill.sort(key=lambda x: -x["last_season_fpts_half"])
+skill_by_pos: dict[str, list] = {}
+for p in skill:
+    skill_by_pos.setdefault(p["position"], []).append(p)
+for pos, rows in skill_by_pos.items():
+    rows.sort(key=lambda x: -x["last_season_fpts_half"])
+
+baseline_pts = {
+    pos: rows[min(VBD_BASELINE_RANK[pos], len(rows)) - 1]["last_season_fpts_half"]
+    for pos, rows in skill_by_pos.items() if pos in VBD_BASELINE_RANK
+}
+for p in skill:
+    p["vbd_value"] = p["last_season_fpts_half"] - baseline_pts.get(p["position"], 0)
+
+skill.sort(key=lambda x: -x["vbd_value"])
 kickers.sort(key=lambda x: -x["last_season_fpts_half"])
 dst.sort(key=lambda x: -x["last_season_fpts_half"])
 
 SKILL_CAP, K_CAP, DST_CAP = 244, 24, 32
 draft_pool = skill[:SKILL_CAP] + kickers[:K_CAP] + dst[:DST_CAP]
+for p in draft_pool:
+    p.pop("vbd_value", None)
 
 # pos_rank_last_season: rank within position among the *drafted pool*, by half-PPR pts
+# (raw points, not VBD value — this answers "best RB by production", a different
+# question from "best pick overall").
 by_pos: dict[str, list] = {}
 for p in draft_pool:
     by_pos.setdefault(p["position"], []).append(p)
