@@ -10,6 +10,7 @@ const NAV = [
   { to: "/schedule", label: "Schedule Difficulty" },
   { to: "/draft", label: "Mock Draft" },
   { to: "/historical", label: "Historical" },
+  { to: "/picks", label: "Predictions" },
 ];
 
 function ScoringSwitcher() {

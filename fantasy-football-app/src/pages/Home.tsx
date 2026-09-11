@@ -40,6 +40,12 @@ const FEATURES = [
     desc: "Browse league leaders and champions at every position, season by season back to 2010.",
     color: "var(--series-7)",
   },
+  {
+    to: "/picks",
+    title: "Season Predictions",
+    desc: "Isa, Shahe, and Charlie each lock in division winners, conference champs, the Super Bowl, and the major awards.",
+    color: "var(--series-5)",
+  },
 ];
 
 export default function Home() {
