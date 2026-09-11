@@ -10,6 +10,7 @@ const Compare = lazy(() => import("./pages/Compare"));
 const Schedule = lazy(() => import("./pages/Schedule"));
 const Draft = lazy(() => import("./pages/Draft"));
 const Historical = lazy(() => import("./pages/Historical"));
+const Picks = lazy(() => import("./pages/Picks"));
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/draft" element={<Draft />} />
           <Route path="/historical" element={<Historical />} />
+          <Route path="/picks" element={<Picks />} />
         </Route>
       </Routes>
     </Suspense>
