@@ -1,3 +1,5 @@
+import { collection, doc, onSnapshot, setDoc } from "firebase/firestore";
+import { db } from "./firebase";
 import type { TeamInfo } from "./types";
 
 export const PERSONS = ["Isa", "Shahe", "Charlie"] as const;
@@ -36,9 +38,13 @@ export const AWARD_FIELDS: { key: keyof Pick<NflPicks, "mvp" | "offensivePlayerO
   { key: "rookieOfYear", label: "Rookie of the Year", placeholder: "e.g. Caleb Williams" },
 ];
 
-const STORAGE_KEY = "ff-lab-nfl-picks-2026";
+const COLLECTION = "picks";
 
-function emptyPicks(): NflPicks {
+function personDocId(person: Person): string {
+  return person.toLowerCase();
+}
+
+export function emptyPicks(): NflPicks {
   return {
     divisions: DIVISIONS.reduce((acc, d) => {
       acc[d] = "";
@@ -62,32 +68,44 @@ export function emptyStore(): PicksStore {
   }, {} as PicksStore);
 }
 
-export function loadStore(): PicksStore {
-  const base = emptyStore();
-  if (typeof window === "undefined") return base;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return base;
-    const parsed = JSON.parse(raw) as Partial<PicksStore>;
-    for (const person of PERSONS) {
-      const saved = parsed[person];
-      if (saved) {
-        base[person] = {
-          ...base[person],
-          ...saved,
-          divisions: { ...base[person].divisions, ...(saved.divisions ?? {}) },
-        };
-      }
-    }
-    return base;
-  } catch {
-    return base;
-  }
+function normalizePicks(raw: Partial<NflPicks> | undefined): NflPicks {
+  const base = emptyPicks();
+  if (!raw) return base;
+  return {
+    ...base,
+    ...raw,
+    divisions: { ...base.divisions, ...(raw.divisions ?? {}) },
+  };
 }
 
-export function saveStore(store: PicksStore) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+/** Subscribes to every person's picks in Firestore, live. Returns an unsubscribe function. */
+export function subscribeToStore(onChange: (store: PicksStore) => void, onError?: (err: Error) => void) {
+  return onSnapshot(
+    collection(db, COLLECTION),
+    (snapshot) => {
+      const store = emptyStore();
+      for (const person of PERSONS) {
+        const docSnap = snapshot.docs.find((d) => d.id === personDocId(person));
+        store[person] = normalizePicks(docSnap?.data() as Partial<NflPicks> | undefined);
+      }
+      onChange(store);
+    },
+    (err) => onError?.(err)
+  );
+}
+
+/** Merge-writes a patch of fields into one person's picks document. */
+export async function savePersonPicks(person: Person, patch: Partial<NflPicks>) {
+  await setDoc(
+    doc(db, COLLECTION, personDocId(person)),
+    { ...patch, updatedAt: new Date().toISOString() },
+    { merge: true }
+  );
+}
+
+/** Fully replaces one person's picks document (used to clear it). */
+export async function resetPersonPicks(person: Person) {
+  await setDoc(doc(db, COLLECTION, personDocId(person)), { ...emptyPicks(), updatedAt: new Date().toISOString() });
 }
 
 export function divisionTeams(teams: TeamInfo[], division: DivisionKey): TeamInfo[] {

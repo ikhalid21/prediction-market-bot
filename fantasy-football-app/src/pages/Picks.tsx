@@ -5,8 +5,10 @@ import {
   PERSONS,
   DIVISIONS,
   AWARD_FIELDS,
-  loadStore,
-  saveStore,
+  emptyStore,
+  subscribeToStore,
+  savePersonPicks,
+  resetPersonPicks,
   divisionTeams,
   conferenceTeams,
   type Person,
@@ -64,77 +66,74 @@ function TeamSelect({
 
 export default function Picks() {
   const [teams, setTeams] = useState<TeamInfo[] | null>(null);
-  const [store, setStore] = useState<PicksStore | null>(null);
+  const [store, setStore] = useState<PicksStore>(emptyStore());
+  const [connected, setConnected] = useState(false);
   const [active, setActive] = useState<Person>(PERSONS[0]);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const flashTimer = useRef<number | null>(null);
+  const debounceTimers = useRef<Record<string, number>>({});
 
   useEffect(() => {
     getTeams().then(setTeams);
-    setStore(loadStore());
+    const unsubscribe = subscribeToStore(
+      (next) => {
+        setStore(next);
+        setConnected(true);
+      },
+      () => setSaveError(true)
+    );
+    return unsubscribe;
   }, []);
-
-  useEffect(() => {
-    if (!store) return;
-    saveStore(store);
-    setSavedFlash(true);
-    if (flashTimer.current) window.clearTimeout(flashTimer.current);
-    flashTimer.current = window.setTimeout(() => setSavedFlash(false), 1200);
-    return () => {
-      if (flashTimer.current) window.clearTimeout(flashTimer.current);
-    };
-  }, [store]);
 
   const teamMap = useMemo(() => new Map((teams ?? []).map((t) => [t.abbr, t])), [teams]);
 
-  function update(person: Person, patch: Partial<NflPicks>) {
-    setStore((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        [person]: { ...prev[person], ...patch, updatedAt: new Date().toISOString() },
-      };
-    });
+  function flashSaved() {
+    setSavedFlash(true);
+    if (flashTimer.current) window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setSavedFlash(false), 1200);
+  }
+
+  function persist(person: Person, patch: Partial<NflPicks>, debounceKey?: string) {
+    const write = () => {
+      savePersonPicks(person, patch)
+        .then(() => {
+          setSaveError(false);
+          flashSaved();
+        })
+        .catch(() => setSaveError(true));
+    };
+    if (!debounceKey) {
+      write();
+      return;
+    }
+    const key = `${person}:${debounceKey}`;
+    if (debounceTimers.current[key]) window.clearTimeout(debounceTimers.current[key]);
+    debounceTimers.current[key] = window.setTimeout(write, 500);
+  }
+
+  function update(person: Person, patch: Partial<NflPicks>, debounceKey?: string) {
+    setStore((prev) => ({
+      ...prev,
+      [person]: { ...prev[person], ...patch },
+    }));
+    persist(person, patch, debounceKey);
   }
 
   function updateDivision(person: Person, division: DivisionKey, abbr: string) {
-    setStore((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        [person]: {
-          ...prev[person],
-          divisions: { ...prev[person].divisions, [division]: abbr },
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    });
+    setStore((prev) => ({
+      ...prev,
+      [person]: { ...prev[person], divisions: { ...prev[person].divisions, [division]: abbr } },
+    }));
+    persist(person, { divisions: { ...store[person].divisions, [division]: abbr } });
   }
 
   function resetPerson(person: Person) {
     if (!window.confirm(`Clear all picks for ${person}?`)) return;
-    setStore((prev) => {
-      if (!prev) return prev;
-      const cleared: NflPicks = {
-        divisions: DIVISIONS.reduce((acc, d) => {
-          acc[d] = "";
-          return acc;
-        }, {} as Record<DivisionKey, string>),
-        afcChampion: "",
-        nfcChampion: "",
-        superBowlChampion: "",
-        mvp: "",
-        offensivePlayerOfYear: "",
-        defensivePlayerOfYear: "",
-        rookieOfYear: "",
-        updatedAt: new Date().toISOString(),
-      };
-      return { ...prev, [person]: cleared };
-    });
+    resetPersonPicks(person).catch(() => setSaveError(true));
   }
 
   function exportPicks() {
-    if (!store) return;
     const blob = new Blob([JSON.stringify(store, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -149,20 +148,11 @@ export default function Picks() {
     reader.onload = () => {
       try {
         const parsed = JSON.parse(String(reader.result));
-        setStore((prev) => {
-          if (!prev) return prev;
-          const next = { ...prev };
-          for (const person of PERSONS) {
-            if (parsed[person]) {
-              next[person] = {
-                ...next[person],
-                ...parsed[person],
-                divisions: { ...next[person].divisions, ...(parsed[person].divisions ?? {}) },
-              };
-            }
+        for (const person of PERSONS) {
+          if (parsed[person]) {
+            savePersonPicks(person, parsed[person]).catch(() => setSaveError(true));
           }
-          return next;
-        });
+        }
       } catch {
         window.alert("That file doesn't look like a valid picks export.");
       }
@@ -170,7 +160,7 @@ export default function Picks() {
     reader.readAsText(file);
   }
 
-  if (!teams || !store) return <Loading label="Loading teams…" />;
+  if (!teams || !connected) return <Loading label="Connecting to live picks…" />;
 
   const picks = store[active];
   const afcTeams = conferenceTeams(teams, "AFC");
@@ -211,9 +201,10 @@ export default function Picks() {
             </button>
           );
         })}
-        <span className={`text-xs text-[var(--good)] transition-opacity ${savedFlash ? "opacity-100" : "opacity-0"}`}>
-          Saved ✓
+        <span className={`text-xs text-[var(--good)] transition-opacity ${savedFlash && !saveError ? "opacity-100" : "opacity-0"}`}>
+          Synced ✓
         </span>
+        {saveError && <span className="text-xs text-[var(--critical)]">Couldn't save — check your connection</span>}
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={exportPicks}
@@ -244,8 +235,8 @@ export default function Picks() {
       </div>
 
       <p className="text-xs text-[var(--text-muted)] -mt-3">
-        Picks are saved to this browser only. Use Export to save a copy or share picks made on another device, and
-        Import to merge them in.
+        Picks sync live for everyone on this page — no need to send files around. Export/Import are just there as a
+        backup or to bulk-restore picks.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -298,7 +289,7 @@ export default function Picks() {
               <label className="text-xs font-medium text-[var(--text-secondary)]">{f.label}</label>
               <input
                 value={picks[f.key]}
-                onChange={(e) => update(active, { [f.key]: e.target.value } as Partial<NflPicks>)}
+                onChange={(e) => update(active, { [f.key]: e.target.value } as Partial<NflPicks>, f.key)}
                 placeholder={f.placeholder}
                 className="w-full px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-1)] text-sm"
               />
